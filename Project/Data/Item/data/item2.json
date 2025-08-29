@@ -1,0 +1,7 @@
+﻿{
+  "Name" :  "God Milk",
+  "Info" : "浄化の力が込められた液体\n自身を死から遠ざける",
+  "ImagePath" :  "milk.png",
+  "StockCount" :  1,
+  "SellValue" :  100
+}

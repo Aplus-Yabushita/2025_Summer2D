@@ -1,0 +1,7 @@
+﻿{
+  "Name" :  "Yellar",
+  "Info" : "金属製の通貨",
+  "ImagePath" :  "coin.png",
+  "StockCount" :  100,
+  "SellValue" :  1
+}

@@ -1,0 +1,7 @@
+﻿{
+  "Name" :  "Spell Book",
+  "Info" : "呪文の記述された本\n呪文の質に応じて売値も上がる",
+  "ImagePath" :  "book.png",
+  "StockCount" :  1,
+  "SellValue" :  1000
+}

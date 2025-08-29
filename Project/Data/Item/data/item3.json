@@ -1,0 +1,7 @@
+﻿{
+  "Name" :  "Drug",
+  "Info" : "治療薬\n傷を癒す",
+  "ImagePath" :  "drug.png",
+  "StockCount" :  4,
+  "SellValue" :  50
+}

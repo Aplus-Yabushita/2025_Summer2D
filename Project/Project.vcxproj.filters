@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ソース ファイル\Font">
+      <UniqueIdentifier>{1246380b-b0c8-4ddb-ad80-d760506e91ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Image">
+      <UniqueIdentifier>{f1279551-4d37-43cc-93f0-4fe986e18c25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Input">
+      <UniqueIdentifier>{3bdc489e-1c83-4cb6-8105-7b83851398ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\UI">
+      <UniqueIdentifier>{f2da3b04-ad38-45b6-b96f-11252f828f31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\UI\Button">
+      <UniqueIdentifier>{d5228cfa-50c1-4b35-b5f5-ea14a750dba7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Page">
+      <UniqueIdentifier>{d652189f-fe6b-443d-9a48-acb43dcdafcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Page\MainMenu">
+      <UniqueIdentifier>{4d92cb2f-2d25-4b98-bc30-c044f26f5fdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Page\Inventory">
+      <UniqueIdentifier>{48c011b9-3f29-4691-bdc6-0f5ac24c1ddd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Page\Shop">
+      <UniqueIdentifier>{9133fcd7-c7f7-4468-b3d4-5234aed36ebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\UI\UIScrollBar">
+      <UniqueIdentifier>{d390adf5-b18c-4139-b7e4-33ebd3760cff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\UI\ItemList">
+      <UniqueIdentifier>{df367b38-7180-43bd-8f69-5948d0d4aed9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\DataBase">
+      <UniqueIdentifier>{5748595e-2ada-46a3-94eb-0135d4e446cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\DataBase\ItemImage">
+      <UniqueIdentifier>{14d09386-e1b0-4d89-b708-b91d3b5bdf1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\DataBase\ItemData">
+      <UniqueIdentifier>{bcc09487-0365-458e-8a44-cb2c99f9089a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\CharacterData">
+      <UniqueIdentifier>{52a607a4-12eb-455d-9e1f-3b2225deb870}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Direct2DLib.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Font\Font.h">
+      <Filter>ソース ファイル\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Util.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Image\Bitmap.h">
+      <Filter>ソース ファイル\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Input\Input.h">
+      <Filter>ソース ファイル\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DrawSystem.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Font\FontPool.h">
+      <Filter>ソース ファイル\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UI\Button\UIButton.h">
+      <Filter>ソース ファイル\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Page\MainMenu\MainMenu.h">
+      <Filter>ソース ファイル\Page\MainMenu</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Page\PageParent.h">
+      <Filter>ソース ファイル\Page</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Page\PageManager.h">
+      <Filter>ソース ファイル\Page</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Page\Inventory\Inventory.h">
+      <Filter>ソース ファイル\Page\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Page\Shop\Shop.h">
+      <Filter>ソース ファイル\Page\Shop</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UI\ScrollBar\UIScrollBar.h">
+      <Filter>ソース ファイル\UI\UIScrollBar</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UI\ItemList\UIItemList.h">
+      <Filter>ソース ファイル\UI\ItemList</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DataBase\ItemImage\ItemImagePool.h">
+      <Filter>ソース ファイル\DataBase\ItemImage</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DataBase\ItemData\ItemData.h">
+      <Filter>ソース ファイル\DataBase\ItemData</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DataBase\ItemData\ItemDataPool.h">
+      <Filter>ソース ファイル\DataBase\ItemData</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CharacterData\PlayerData.h">
+      <Filter>ソース ファイル\CharacterData</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CharacterData\CharacterData.h">
+      <Filter>ソース ファイル\CharacterData</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UI\ItemList\UIItemColumn.h">
+      <Filter>ソース ファイル\UI\ItemList</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UI\ItemList\BuyItemData.h">
+      <Filter>ソース ファイル\UI\ItemList</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\json.hpp">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Algorithm.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\FileSystem.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Direct2DLib.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Font\Font.cpp">
+      <Filter>ソース ファイル\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Image\Bitmap.cpp">
+      <Filter>ソース ファイル\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Input\Input.cpp">
+      <Filter>ソース ファイル\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DrawSystem.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Font\FontPool.cpp">
+      <Filter>ソース ファイル\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UI\Button\UIButton.cpp">
+      <Filter>ソース ファイル\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Page\MainMenu\MainMenu.cpp">
+      <Filter>ソース ファイル\Page\MainMenu</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Page\PageParent.cpp">
+      <Filter>ソース ファイル\Page</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Page\PageManager.cpp">
+      <Filter>ソース ファイル\Page</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Page\Inventory\Inventory.cpp">
+      <Filter>ソース ファイル\Page\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Page\Shop\Shop.cpp">
+      <Filter>ソース ファイル\Page\Shop</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UI\ScrollBar\UIScrollBar.cpp">
+      <Filter>ソース ファイル\UI\UIScrollBar</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UI\ItemList\UIItemList.cpp">
+      <Filter>ソース ファイル\UI\ItemList</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DataBase\ItemImage\ItemImagePool.cpp">
+      <Filter>ソース ファイル\DataBase\ItemImage</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DataBase\ItemData\ItemDataPool.cpp">
+      <Filter>ソース ファイル\DataBase\ItemData</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DataBase\ItemData\ItemData.cpp">
+      <Filter>ソース ファイル\DataBase\ItemData</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CharacterData\PlayerData.cpp">
+      <Filter>ソース ファイル\CharacterData</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CharacterData\CharacterData.cpp">
+      <Filter>ソース ファイル\CharacterData</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UI\ItemList\UIItemColumn.cpp">
+      <Filter>ソース ファイル\UI\ItemList</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UI\ItemList\BuyItemData.cpp">
+      <Filter>ソース ファイル\UI\ItemList</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\FileSystem.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

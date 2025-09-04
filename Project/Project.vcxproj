@@ -143,6 +143,8 @@
     <ClInclude Include="Source\Input\Input.h" />
     <ClInclude Include="Source\Direct2DLib.h" />
     <ClInclude Include="Source\json.hpp" />
+    <ClInclude Include="Source\Network\Net.hpp" />
+    <ClInclude Include="Source\Network\NetBrowser.hpp" />
     <ClInclude Include="Source\Page\Inventory\Inventory.h" />
     <ClInclude Include="Source\Page\MainMenu\MainMenu.h" />
     <ClInclude Include="Source\Page\PageManager.h" />
@@ -169,6 +171,8 @@
     <ClCompile Include="Source\Input\Input.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Direct2DLib.cpp" />
+    <ClCompile Include="Source\Network\Net.cpp" />
+    <ClCompile Include="Source\Network\NetBrowser.cpp" />
     <ClCompile Include="Source\Page\Inventory\Inventory.cpp" />
     <ClCompile Include="Source\Page\MainMenu\MainMenu.cpp" />
     <ClCompile Include="Source\Page\PageManager.cpp" />

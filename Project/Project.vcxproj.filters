@@ -58,6 +58,9 @@
     <Filter Include="ソース ファイル\CharacterData">
       <UniqueIdentifier>{52a607a4-12eb-455d-9e1f-3b2225deb870}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Network">
+      <UniqueIdentifier>{91c2fc82-b351-4d0c-bb7e-f70c40d0b9bf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Direct2DLib.h">
@@ -135,6 +138,12 @@
     <ClInclude Include="Source\FileSystem.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Network\Net.hpp">
+      <Filter>ソース ファイル\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Network\NetBrowser.hpp">
+      <Filter>ソース ファイル\Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\main.cpp">
@@ -205,6 +214,12 @@
     </ClCompile>
     <ClCompile Include="Source\FileSystem.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Network\Net.cpp">
+      <Filter>ソース ファイル\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Network\NetBrowser.cpp">
+      <Filter>ソース ファイル\Network</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

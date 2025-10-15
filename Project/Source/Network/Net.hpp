@@ -4,7 +4,6 @@
 /*UDP通信																																	*/
 /*------------------------------------------------------------------------------------------------------------------------------------------*/
 #define NOMINMAX
-#include <windows.h>
 #include <algorithm>
 #include <array>
 
@@ -21,21 +20,21 @@ namespace Algorithm {
 		float z;
 	public:
 		Vector3DX operator+(const Vector3DX& o) const noexcept {
-			Vector3DX Answer;
+			Vector3DX Answer{};
 			Answer.x = this->x + o.x;
 			Answer.y = this->y + o.y;
 			Answer.z = this->z + o.z;
 			return Answer;
 		}
 		Vector3DX operator-(const Vector3DX& o) const noexcept {
-			Vector3DX Answer;
+			Vector3DX Answer{};
 			Answer.x = this->x - o.x;
 			Answer.y = this->y - o.y;
 			Answer.z = this->z - o.z;
 			return Answer;
 		}
 		Vector3DX operator*(float per) const noexcept {
-			Vector3DX Answer;
+			Vector3DX Answer{};
 			Answer.x = this->x * per;
 			Answer.y = this->y * per;
 			Answer.z = this->z * per;
@@ -45,7 +44,7 @@ namespace Algorithm {
 	class InputControl {
 	public:
 		int			KeyFlag{};
-		Vector3DX	AimVec;
+		Vector3DX	AimVec{};
 	public:
 		void SetKeyInputFlags(const InputControl& o) {
 			this->KeyFlag = o.KeyFlag;
@@ -84,6 +83,7 @@ namespace Algorithm {
 }
 namespace NetWork {
 	constexpr int InvalidID = -1;
+	constexpr SOCKET InvalidSOCKETID = SIZE_MAX;
 	typedef int PlayerID;
 
 	static const int		Player_num = 2;
@@ -93,39 +93,20 @@ namespace NetWork {
 		unsigned char			d1, d2, d3, d4;				// アドレス値
 	};
 	class UDPCore {
-		int			m_Handle{ InvalidID };				// ネットワークハンドル
+		SOCKET		m_Handle{ InvalidSOCKETID };				// ネットワークハンドル
 	public:
-		const bool	IsActive(void) const noexcept { return (this->m_Handle != InvalidID); }
+		const bool	IsActive(void) const noexcept { return (this->m_Handle != InvalidSOCKETID); }
 	public:
 		//特定のポート番号でUDP通信準備開始
-		void InitUDP(int Port) {
-			//a;
-			this->m_Handle = InvalidID;
-		}
+		void InitUDP(int Port);
 		//ハンドルを破棄
-		void DisposeUDP() {
-			//a;
-			this->m_Handle = InvalidID;
-			return;
-		}
+		void DisposeUDP();
 		//受信チェック
-		int CheckRecvUDP() {
-			if (!IsActive()) { return FALSE; }
-			//a;
-			return FALSE;
-		}
+		int CheckRecvUDP();
 		//データを受信
-		int RecvDataUDP(IPDATA* RecvIP, int* RecvPort, void* Buffer, int Length, int Peek) {
-			if (!IsActive()) { return InvalidID; }
-			//a;
-			return InvalidID;
-		}
+		int RecvDataUDP(IPDATA* RecvIP, int* RecvPort, void* Buffer, int Length, int Peek);
 		//データを送信
-		int SendDataUDP(IPDATA SendIP, int SendPort, const void* Buffer, int Length) {
-			if (!IsActive()) { return FALSE; }
-			//a;
-			return FALSE;
-		}
+		int SendDataUDP(IPDATA SendIP, int SendPort, const void* Buffer, int Length);
 	};
 	class UDPNetWorkDX {
 	private:
@@ -568,7 +549,7 @@ namespace NetWork {
 				this->m_Ping = -1.0f;
 				return;
 			}
-			this->m_Pings[this->m_PingNow] = std::max(0.0f, static_cast<float>(microsec) / 1000.0f - (1000.0f / this->m_Tick));//ティック分引く
+			this->m_Pings[this->m_PingNow] = Mathf::Max(0.0f, static_cast<float>(microsec) / 1000.0f - (1000.0f / this->m_Tick));//ティック分引く
 			++this->m_PingNow %= this->m_PingTotal;
 			this->m_Ping = 0.0f;
 			for (auto& ping : this->m_Pings) {

@@ -1,21 +1,32 @@
 #include	"NetBrowser.hpp"
 #include "../Font/FontPool.h"
+#include "../Input/Input.h"
 
 const NetWork::NetWorkBrowser* SingletonBase<NetWork::NetWorkBrowser>::m_Singleton = nullptr;
 
 namespace NetWork {
 
 	//表示物設定
-	bool SetMsgClickBox(int xmin, int ymin, int xmax, int ymax, int fontsize, D2D1::ColorF Color, bool isloop, const wchar_t* Text) {
+	static bool SetMsgClickBox(int xmin, int ymin, int xmax, int ymax, int fontsize, D2D1::ColorF Color, bool isloop, const wchar_t* Text) {
+		bool OnMouse = HitPointToRectangle(
+			static_cast<int>(Input::Instance()->GetMousePosition().x), static_cast<int>(Input::Instance()->GetMousePosition().y),
+			xmin, ymin, xmax, ymax
+		);
+
 		Direct2DLib::Instance()->GetDrawSystem()->SetRect(static_cast<float>(xmin), static_cast<float>(ymin), static_cast<float>(xmax), static_cast<float>(ymax),
-			Color);
+			OnMouse ? D2D1::ColorF(D2D1::ColorF::White) : Color);
 		Direct2DLib::Instance()->GetDrawSystem()->SetFont(static_cast<float>(xmin), static_cast<float>(ymin), static_cast<float>(xmax), static_cast<float>(ymax),
 			Text,
 			D2D1::ColorF(D2D1::ColorF::Black), FontPool::Instance()->GetFont(fontsize, FontCenterX::Center, FontCenterY::Center).get());
-		return false;//todo
+
+
+		bool Trigger = OnMouse && Input::Instance()->GetKeyTrigger(VK_LBUTTON);
+		bool Press = OnMouse && Input::Instance()->GetKeyPress(VK_LBUTTON);
+
+		return Trigger;
 	}
 
-	void SetString(int FintSize, FontCenterX FontX, FontCenterY FontY, int xmin, int ymin, int xmax, int ymax,
+	static void SetString(int FintSize, FontCenterX FontX, FontCenterY FontY, int xmin, int ymin, int xmax, int ymax,
 		D2D1::ColorF Color,
 		const wchar_t* Text) {
 		Direct2DLib::Instance()->GetDrawSystem()->SetFont(
@@ -55,7 +66,7 @@ namespace NetWork {
 		//
 		{
 			wchar_t Text[256] = L"";
-			swprintf(Text, L" %d/%d", static_cast<int>(this->m_Sequence), static_cast<int>(BrowserSequence::Ready));
+			swprintf_s(Text, L" %d/%d", static_cast<int>(this->m_Sequence), static_cast<int>(BrowserSequence::Ready));
 
 			Direct2DLib::Instance()->GetDrawSystem()->SetRect(static_cast<float>(xp - 10), static_cast<float>(yp - 10), static_cast<float>(xp + xs + 10), static_cast<float>(yp + ys + 10), D2D1::ColorF(0.25f, 0.25f, 0.25f));//背景
 			SetString(18,
@@ -102,7 +113,7 @@ namespace NetWork {
 					auto& netset = this->m_NewWorkSettings.Get(loop);
 
 					wchar_t Text[256] = L"";
-					swprintf(Text, L"[%d][%d,%d,%d,%d]", netset.UsePort, netset.IP.d1, netset.IP.d2, netset.IP.d3, netset.IP.d4);
+					swprintf_s(Text, L"[%d][%d,%d,%d,%d]", netset.UsePort, netset.IP.d1, netset.IP.d2, netset.IP.d3, netset.IP.d4);
 
 					if (SetMsgClickBox(xp, y1p + 50 * loop, xp + xs, y1p + 50 * loop + 18 * 2, 18, D2D1::ColorF(0.75f, 0.75f, 0.75f), false, Text)) {
 						ReadyConnect(netset);
@@ -125,7 +136,7 @@ namespace NetWork {
 			}
 			{
 				wchar_t Text[256] = L"";
-				swprintf(Text, L"ポート=[%d-%d]", this->m_NetSetting.UsePort, this->m_NetSetting.UsePort + NetWork::Player_num - 1);
+				swprintf_s(Text, L"ポート=[%d-%d]", this->m_NetSetting.UsePort, this->m_NetSetting.UsePort + NetWork::Player_num - 1);
 
 				SetString(18,
 					FontCenterX::Center, FontCenterY::Top, xp, y1p, xp + xs, y1p+64, D2D1::ColorF(D2D1::ColorF::White), Text);
@@ -135,7 +146,7 @@ namespace NetWork {
 				int yp1 = y1p + 100;
 
 				wchar_t Text[256] = L"";
-				swprintf(Text, L"IP=[%d,%d,%d,%d]", this->m_NetSetting.IP.d1, this->m_NetSetting.IP.d2, this->m_NetSetting.IP.d3, this->m_NetSetting.IP.d4);
+				swprintf_s(Text, L"IP=[%d,%d,%d,%d]", this->m_NetSetting.IP.d1, this->m_NetSetting.IP.d2, this->m_NetSetting.IP.d3, this->m_NetSetting.IP.d4);
 
 				SetString(18,
 					FontCenterX::Center, FontCenterY::Top, xp, yp1, xp + xs, yp1+64, D2D1::ColorF(D2D1::ColorF::White), Text);
@@ -175,12 +186,12 @@ namespace NetWork {
 					FontCenterX::Left, FontCenterY::Top, xp, yp1, xp + 255, yp + 64, D2D1::ColorF(D2D1::ColorF::White), this->m_IsServer ? L"種別[サーバー]" : L"種別[クライアント]"); yp1 += 18;
 
 				wchar_t Text[256] = L"";
-				swprintf(Text, L"使用ポート[%d-%d]", this->m_NetSetting.UsePort, this->m_NetSetting.UsePort + NetWork::Player_num - 1);
+				swprintf_s(Text, L"使用ポート[%d-%d]", this->m_NetSetting.UsePort, this->m_NetSetting.UsePort + NetWork::Player_num - 1);
 
 				SetString(18,
 					FontCenterX::Left, FontCenterY::Top, xp, yp1, xp + 255, yp + 64, D2D1::ColorF(D2D1::ColorF::White), Text); yp1 += 18;
 
-				swprintf(Text, L"IP=[%d,%d,%d,%d]", this->m_NetSetting.IP.d1, this->m_NetSetting.IP.d2, this->m_NetSetting.IP.d3, this->m_NetSetting.IP.d4);
+				swprintf_s(Text, L"IP=[%d,%d,%d,%d]", this->m_NetSetting.IP.d1, this->m_NetSetting.IP.d2, this->m_NetSetting.IP.d3, this->m_NetSetting.IP.d4);
 
 				SetString(18,
 					FontCenterX::Left, FontCenterY::Top, xp, yp1, xp + 255, yp + 64, D2D1::ColorF(D2D1::ColorF::White), Text); yp1 += 18;

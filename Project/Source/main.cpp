@@ -12,7 +12,8 @@
 
 #include "CharacterData/PlayerData.h"
 
-//#include "Network/Net.hpp"
+#include "Network/Net.hpp"
+#include "Network/NetBrowser.hpp"
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int  nCmdShow) {
 	//シングルトンの作成
@@ -44,6 +45,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int  nCm
 	PageManager::Instance()->SetFirstPage(&MainMenuPage);
 	//ページ初期化
 	PageManager::Instance()->Init();
+
+
+	NetWork::NetWorkController* NetController = nullptr;
+	NetWork::PlayerSendData SendData;
+
+	NetWork::NetWorkBrowser::Create();
+
+	//SendData.SetMyPlayer();
 	//メインループ
 	while (true) {
 		//入力の更新
@@ -54,11 +63,37 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int  nCm
 		//ページの更新
 		PageManager::Instance()->Update();
 		PageManager::Instance()->Draw();
+		NetWork::NetWorkBrowser::Instance()->Draw();
+
+		if (NetWork::NetWorkBrowser::Instance()->IsDataReady()) {
+			NetController = new NetWork::NetWorkController(
+				NetWork::NetWorkBrowser::Instance()->IsServer(),
+				NetWork::NetWorkBrowser::Instance()->GetNetSetting().UsePort,
+				NetWork::NetWorkBrowser::Instance()->GetNetSetting().IP,
+				NetWork::NetWorkBrowser::Instance()->GetServerPlayer());
+		}
+		if (NetController) {
+			NetController->Update(SendData);
+			if (NetController->IsInGame()) {
+				if (NetController->IsServer()) {
+					//NetController->GetServerPlayerData(0);
+				}
+				else {
+					SendData = NetController->GetServerPlayerData(1).GetPlayerSendData();//サーバーからのデータを反映する
+				}
+			}
+		}
+		//TODO:SendDataを挙動に反映
+
 		//描画更新を指定したのち16.67ms待機
 		if (!Direct2DLib::Instance()->ScreenFlip(60)) { break; }
 		//終了判定が出たのでメインループを抜ける
 		if (PageManager::Instance()->IsEnd()) { break; }
 	}
+	delete NetController;
+	NetController = nullptr;
+
+	NetWork::NetWorkBrowser::Release();
 	//
 	PlayerData::Instance()->Save();
 	//シングルトンの破棄

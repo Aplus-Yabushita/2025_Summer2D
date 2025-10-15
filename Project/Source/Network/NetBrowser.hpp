@@ -25,7 +25,7 @@ namespace NetWork {
 			std::vector<NewSetting>	m_NewWorkSetting;
 		public:
 			void Load(void) noexcept {
-				std::ifstream inputfile("data/NetWorkSetting.txt");
+				std::ifstream inputfile("Data/NetWorkSetting.txt");
 				while (true) {
 					std::string line;
 					this->m_NewWorkSetting.emplace_back();
@@ -56,7 +56,7 @@ namespace NetWork {
 				inputfile.close();
 			}
 			void Save(void) noexcept {
-				std::ofstream outputfile("data/NetWorkSetting.txt");
+				std::ofstream outputfile("Data/NetWorkSetting.txt");
 				for (auto& netset : this->m_NewWorkSetting) {
 					int ID = static_cast<int>(&netset - &this->m_NewWorkSetting.front());
 					outputfile << "Setting" + std::to_string(ID) + "_Port=" + std::to_string(netset.UsePort) + "\n";

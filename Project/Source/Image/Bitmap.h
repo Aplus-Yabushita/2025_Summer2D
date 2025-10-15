@@ -19,8 +19,10 @@ public:
 	Direct2DBitMap& operator=(const Direct2DBitMap&) = delete;
 	Direct2DBitMap& operator=(Direct2DBitMap&&) = delete;
 	virtual ~Direct2DBitMap() {
-		SafeRelease(&m_pD2DBitmap);
-		SafeRelease(&m_pConvertedSourceBitmap);
+		//SafeRelease(&m_pD2DBitmap);
+		//SafeRelease(&m_pConvertedSourceBitmap);
+		m_pD2DBitmap = nullptr;
+		m_pConvertedSourceBitmap = nullptr;
 	}
 public:
 	void Load(const WCHAR* szFileName);

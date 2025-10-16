@@ -102,9 +102,9 @@ namespace NetWork {
 		//ハンドルを破棄
 		void DisposeUDP();
 		//受信チェック
-		int CheckRecvUDP();
+		int CheckRecvUDP(int checkPort);
 		//データを受信
-		int RecvDataUDP(IPDATA* RecvIP, int* RecvPort, void* Buffer, int Length, int Peek);
+		int RecvDataUDP(IPDATA* RecvIP, int SendPort, int* RecvPort, void* Buffer, int Length, int Peek);
 		//データを送信
 		int SendDataUDP(IPDATA SendIP, int SendPort, const void* Buffer, int Length);
 	};
@@ -123,6 +123,7 @@ namespace NetWork {
 		bool			Init(bool IsServer, int PORT = InvalidID) noexcept {
 			if (this->m_UDPCore.IsActive()) { return false; }
 			this->m_SendPort = PORT;
+			this->m_RecvPort = PORT;
 			this->m_UDPCore.InitUDP(IsServer ? this->m_SendPort : InvalidID);
 			this->m_IsServer = IsServer;
 			return this->m_UDPCore.IsActive();
@@ -131,6 +132,7 @@ namespace NetWork {
 			if (!this->m_UDPCore.IsActive()) { return; }
 			this->m_UDPCore.DisposeUDP();	// ＵＤＰソケットハンドルの削除
 			this->m_SendPort = InvalidID;
+			this->m_RecvPort = InvalidID;
 		}
 	private:
 		template<class T>
@@ -144,9 +146,9 @@ namespace NetWork {
 		// 受信
 		template<class T>
 		bool			RecvData(T* Data, int* RecvReturn, bool IsPeek) noexcept {
-			switch (this->m_UDPCore.CheckRecvUDP()) {
+			switch (this->m_UDPCore.CheckRecvUDP(this->m_SendPort)) {
 			case TRUE:
-				*RecvReturn = this->m_UDPCore.RecvDataUDP(&this->m_RecvIp, &this->m_RecvPort, Data, sizeof(T), IsPeek ? TRUE : FALSE);		// 受信
+				*RecvReturn = this->m_UDPCore.RecvDataUDP(&this->m_RecvIp, this->m_SendPort, &this->m_RecvPort, Data, sizeof(T), IsPeek ? TRUE : FALSE);		// 受信
 				return true;
 			case FALSE:// 待機
 				*RecvReturn = InvalidID;
@@ -250,6 +252,7 @@ namespace NetWork {
 		ServerPhase			m_ServerPhase{ ServerPhase::Empty };
 	private:
 		int					CalcCheckSum(void) const noexcept {
+			return 0;
 			int Players = 0;
 			for (size_t loop = 0; loop < Player_num; ++loop) {
 				Players += static_cast<int>(GetPlayerData(loop).IsCheckSum() ? 100 : 0);

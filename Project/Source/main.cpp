@@ -48,11 +48,34 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int  nCm
 
 
 	NetWork::NetWorkController* NetController = nullptr;
-	NetWork::PlayerSendData SendData;
+	NetWork::PlayerSendData Send;
+
+	auto GetID = [&]() {
+		if (NetController) {
+			if (NetController->IsInGame()) {
+				return NetController->GetMyLocalPlayerID();
+			}
+		}
+		return 0;
+	};
 
 	NetWork::NetWorkBrowser::Create();
 
-	//SendData.SetMyPlayer();
+	struct PlayerMoveData {
+		Algorithm::InputControl				m_Input{};
+		Algorithm::MoveInfo					m_move{};
+		int32_t						m_FreeData[10]{};
+	};
+
+	std::array<PlayerMoveData, NetWork::Player_num> Player;
+
+	for (int loop = 0; loop < NetWork::Player_num; ++loop) {
+		Player[loop].m_move.pos.x = 100.f + loop*100.f;
+		Player[loop].m_move.pos.y = 100.f;
+		Player[loop].m_move.vec.x = 0.f;
+		Player[loop].m_move.vec.x = 0.f;
+		Player[loop].m_move.repos = Player[loop].m_move.pos;
+	}
 	//メインループ
 	while (true) {
 		//入力の更新
@@ -65,6 +88,33 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int  nCm
 		PageManager::Instance()->Draw();
 		NetWork::NetWorkBrowser::Instance()->Draw();
 
+		{
+
+			Player[GetID()].m_move.vec.x = 0.f;
+			Player[GetID()].m_move.vec.y = 0.f;
+			Player[GetID()].m_move.vec.z = 0.f;
+
+			Player[GetID()].m_Input.KeyFlag = 0;
+			if (Input::Instance()->GetKeyPress(VK_DOWN)) {
+				Player[GetID()].m_Input.KeyFlag |= 1 << 0;
+				Player[GetID()].m_move.vec.y = 1.f;
+			}
+			if (Input::Instance()->GetKeyPress(VK_UP)) {
+				Player[GetID()].m_Input.KeyFlag |= 1 << 1;
+				Player[GetID()].m_move.vec.y = -1.f;
+			}
+			if (Input::Instance()->GetKeyPress(VK_LEFT)) {
+				Player[GetID()].m_Input.KeyFlag |= 1 << 2;
+				Player[GetID()].m_move.vec.x = -1.f;
+			}
+			if (Input::Instance()->GetKeyPress(VK_RIGHT)) {
+				Player[GetID()].m_Input.KeyFlag |= 1 << 3;
+				Player[GetID()].m_move.vec.x = 1.f;
+			}
+			Player[GetID()].m_move.repos = Player[GetID()].m_move.pos;
+			Player[GetID()].m_move.pos = Player[GetID()].m_move.pos + Player[GetID()].m_move.vec * (1000.f / 60.f);
+			Send.SetMyPlayer(Player[GetID()].m_Input, Player[GetID()].m_move, Player[GetID()].m_FreeData);
+		}
 		if (NetWork::NetWorkBrowser::Instance()->IsDataReady()) {
 			NetController = new NetWork::NetWorkController(
 				NetWork::NetWorkBrowser::Instance()->IsServer(),
@@ -73,17 +123,24 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int  nCm
 				NetWork::NetWorkBrowser::Instance()->GetServerPlayer());
 		}
 		if (NetController) {
-			NetController->Update(SendData);
+			NetController->Update(Send);
 			if (NetController->IsInGame()) {
-				if (NetController->IsServer()) {
-					//NetController->GetServerPlayerData(0);
-				}
-				else {
-					SendData = NetController->GetServerPlayerData(1).GetPlayerSendData();//サーバーからのデータを反映する
+				//サーバーからのデータを反映する
+				for (int loop = 0; loop < NetWork::Player_num; ++loop) {
+					const auto& Data = NetController->GetServerPlayerData(loop).GetPlayerSendData();
+					Player[loop].m_Input = Data.GetInput();
+					Player[loop].m_move = Data.GetMove();
+					for (int loop2 = 0; loop2 < 10; ++loop2) {
+						Player[loop].m_FreeData[loop2] = Data.GetFreeData()[loop2];
+					}
 				}
 			}
 		}
-		//TODO:SendDataを挙動に反映
+
+		for (int loop = 0; loop < NetWork::Player_num; ++loop) {
+			Direct2DLib::Instance()->GetDrawSystem()->SetEllipse(Player[loop].m_move.pos.x, Player[loop].m_move.pos.y, 5.f, 5.f,
+				(loop == 0) ? D2D1::ColorF(D2D1::ColorF::Green) : D2D1::ColorF(D2D1::ColorF::Red));
+		}
 
 		//描画更新を指定したのち16.67ms待機
 		if (!Direct2DLib::Instance()->ScreenFlip(60)) { break; }

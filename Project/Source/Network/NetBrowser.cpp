@@ -39,7 +39,7 @@ namespace NetWork {
 		int xp, yp, xs, ys;
 		xp = 0;
 		yp = 0;
-		xs = 500;
+		xs = 300;
 		ys = 300;
 
 		//ラムダ
@@ -183,18 +183,18 @@ namespace NetWork {
 			{
 				int yp1 = y1p;
 				SetString(18,
-					FontCenterX::Left, FontCenterY::Top, xp, yp1, xp + 255, yp + 64, D2D1::ColorF(D2D1::ColorF::White), this->m_IsServer ? L"種別[サーバー]" : L"種別[クライアント]"); yp1 += 18;
+					FontCenterX::Left, FontCenterY::Top, xp, yp1, xp + 255, yp1 + 64, D2D1::ColorF(D2D1::ColorF::White), this->m_IsServer ? L"種別[サーバー]" : L"種別[クライアント]"); yp1 += 24;
 
 				wchar_t Text[256] = L"";
 				swprintf_s(Text, L"使用ポート[%d-%d]", this->m_NetSetting.UsePort, this->m_NetSetting.UsePort + NetWork::Player_num - 1);
 
 				SetString(18,
-					FontCenterX::Left, FontCenterY::Top, xp, yp1, xp + 255, yp + 64, D2D1::ColorF(D2D1::ColorF::White), Text); yp1 += 18;
+					FontCenterX::Left, FontCenterY::Top, xp, yp1, xp + 255, yp1 + 64, D2D1::ColorF(D2D1::ColorF::White), Text); yp1 += 24;
 
 				swprintf_s(Text, L"IP=[%d,%d,%d,%d]", this->m_NetSetting.IP.d1, this->m_NetSetting.IP.d2, this->m_NetSetting.IP.d3, this->m_NetSetting.IP.d4);
 
 				SetString(18,
-					FontCenterX::Left, FontCenterY::Top, xp, yp1, xp + 255, yp + 64, D2D1::ColorF(D2D1::ColorF::White), Text); yp1 += 18;
+					FontCenterX::Left, FontCenterY::Top, xp, yp1, xp + 255, yp1 + 64, D2D1::ColorF(D2D1::ColorF::White), Text); yp1 += 24;
 			}
 			break;
 		default:

@@ -145,7 +145,7 @@ namespace NetWork {
 		WSACleanup();
 		ans = (int)WSAStartup(MAKEWORD(2, 0), &wsaData);   //MAKEWORD(2, 0)はwinsockのバージョン2.0ってこと
 
-		this->m_Handle = (SOCKET)socket(AF_INET, SOCK_DGRAM, 0);  //AF_INETはIPv4、SOCK_DGRAMはUDP通信、0は？
+		this->m_Handle = (SOCKET)socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);  //AF_INETはIPv4、SOCK_STREAMはUDP通信、0は？
 
 	}
 	//ハンドルを破棄
@@ -157,17 +157,17 @@ namespace NetWork {
 		return;
 	}
 	//受信チェック
-	int UDPCore::CheckRecvUDP() {
+	int UDPCore::CheckRecvUDP(int checkPort) {
 		if (!IsActive()) { return FALSE; }
 		// アドレス等格納
 		SOCKADDR_IN addr{};
 		addr.sin_family = AF_INET;  //IPv4
-		addr.sin_port = htons(50008);   //通信ポート番号設定
+		addr.sin_port = htons(checkPort);   //通信ポート番号設定
 		addr.sin_addr.S_un.S_addr = INADDR_ANY; // INADDR_ANYはすべてのアドレスからのパケットを受信する
-		return bind(this->m_Handle, (sockaddr*)&addr, sizeof(addr)) == 0;
+		return bind(this->m_Handle, (sockaddr*)&addr, sizeof(addr)) == 0;//こっちは成功するが
 	}
 	//データを受信
-	int UDPCore::RecvDataUDP(IPDATA* RecvIP, int* RecvPort, void* Buffer, int Length, int Peek) {
+	int UDPCore::RecvDataUDP(IPDATA* RecvIP, int SendPort, int* RecvPort, void* Buffer, int Length, int Peek) {
 		if (!IsActive()) { return InvalidID; }
 		// ここでノンブロッキングに設定しています
 		u_long val = 1;
@@ -175,11 +175,14 @@ namespace NetWork {
 
 		sockaddr_in addr;
 		addr.sin_family = AF_INET;  //IPv4
-		addr.sin_port = htons(*RecvPort);   //通信ポート番号設定
+		addr.sin_port = htons(SendPort);   //通信ポート番号設定
 		addr.sin_addr.S_un.S_addr = INADDR_ANY; // INADDR_ANYはすべてのアドレスからのパケットを受信する
 		int ADDRLen = sizeof(addr);
 		//a;
-		int Ansewr = recvfrom(this->m_Handle, (char*)Buffer, Length, (Peek == TRUE) ? MSG_PEEK : 0, (SOCKADDR*)&addr, &ADDRLen);
+		int Ansewr = recvfrom(this->m_Handle, (char*)Buffer, Length, (Peek == TRUE) ? MSG_PEEK : 0, (SOCKADDR*)&addr, & ADDRLen);
+		//こっちは失敗して10057が戻る
+		int Error = WSAGetLastError();
+		WSANOTINITIALISED;
 		if (Ansewr >= 1) {
 			*RecvPort = addr.sin_port;
 			RecvIP->d1 = addr.sin_addr.S_un.S_un_b.s_b1;

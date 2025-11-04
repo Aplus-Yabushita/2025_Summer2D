@@ -94,6 +94,7 @@ namespace NetWork {
 	};
 	class UDPCore {
 		SOCKET		m_Handle{ InvalidSOCKETID };				// ネットワークハンドル
+		SOCKADDR_IN m_ADDR;
 	public:
 		const bool	IsActive(void) const noexcept { return (this->m_Handle != InvalidSOCKETID); }
 	public:
@@ -104,7 +105,7 @@ namespace NetWork {
 		//受信チェック
 		int CheckRecvUDP(int checkPort);
 		//データを受信
-		int RecvDataUDP(IPDATA* RecvIP, int SendPort, int* RecvPort, void* Buffer, int Length, int Peek);
+		int RecvDataUDP(IPDATA* RecvIP, int SendPort, int* RecvPort, void* Buffer, int Length, bool Peek);
 		//データを送信
 		int SendDataUDP(IPDATA SendIP, int SendPort, const void* Buffer, int Length);
 	};
@@ -148,7 +149,7 @@ namespace NetWork {
 		bool			RecvData(T* Data, int* RecvReturn, bool IsPeek) noexcept {
 			switch (this->m_UDPCore.CheckRecvUDP(this->m_SendPort)) {
 			case TRUE:
-				*RecvReturn = this->m_UDPCore.RecvDataUDP(&this->m_RecvIp, this->m_SendPort, &this->m_RecvPort, Data, sizeof(T), IsPeek ? TRUE : FALSE);		// 受信
+				*RecvReturn = this->m_UDPCore.RecvDataUDP(&this->m_RecvIp, this->m_SendPort, &this->m_RecvPort, Data, sizeof(T), IsPeek);		// 受信
 				return true;
 			case FALSE:// 待機
 				*RecvReturn = InvalidID;

@@ -29,23 +29,23 @@ namespace NetWork {
 				while (true) {
 					std::string line;
 					this->m_NewWorkSetting.emplace_back();
-					if (!std::getline(inputfile, line)) {
+					if (std::getline(inputfile, line)) {
 						line = line.substr(line.find('=') + 1);
 						this->m_NewWorkSetting.back().UsePort = std::clamp<int>(std::stoi(line), 0, 50000);
 					}
-					if (!std::getline(inputfile, line)) {
+					if (std::getline(inputfile, line)) {
 						line = line.substr(line.find('=') + 1);
 						this->m_NewWorkSetting.back().IP.d1 = (unsigned char)std::clamp<int>(std::stoi(line), 0, 255);
 					}
-					if (!std::getline(inputfile, line)) {
+					if (std::getline(inputfile, line)) {
 						line = line.substr(line.find('=') + 1);
 						this->m_NewWorkSetting.back().IP.d2 = (unsigned char)std::clamp<int>(std::stoi(line), 0, 255);
 					}
-					if (!std::getline(inputfile, line)) {
+					if (std::getline(inputfile, line)) {
 						line = line.substr(line.find('=') + 1);
 						this->m_NewWorkSetting.back().IP.d3 = (unsigned char)std::clamp<int>(std::stoi(line), 0, 255);
 					}
-					if (!std::getline(inputfile, line)) {
+					if (std::getline(inputfile, line)) {
 						line = line.substr(line.find('=') + 1);
 						this->m_NewWorkSetting.back().IP.d4 = (unsigned char)std::clamp<int>(std::stoi(line), 0, 255);
 					}

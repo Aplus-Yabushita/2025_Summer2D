@@ -146,11 +146,9 @@ namespace NetWork {
 		ans = (int)WSAStartup(MAKEWORD(2, 0), &wsaData);   //MAKEWORD(2, 0)はwinsockのバージョン2.0ってこと
 
 		this->m_Handle = (SOCKET)socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);  //AF_INETはIPv4、SOCK_STREAMはUDP通信、0は？
-
 	}
 	//ハンドルを破棄
 	void UDPCore::DisposeUDP() {
-		//a;
 		closesocket(this->m_Handle);
 		this->m_Handle = InvalidSOCKETID;
 		WSACleanup();
@@ -160,35 +158,29 @@ namespace NetWork {
 	int UDPCore::CheckRecvUDP(int checkPort) {
 		if (!IsActive()) { return FALSE; }
 		// アドレス等格納
-		SOCKADDR_IN addr{};
-		addr.sin_family = AF_INET;  //IPv4
-		addr.sin_port = htons(checkPort);   //通信ポート番号設定
-		addr.sin_addr.S_un.S_addr = INADDR_ANY; // INADDR_ANYはすべてのアドレスからのパケットを受信する
-		return bind(this->m_Handle, (sockaddr*)&addr, sizeof(addr)) == 0;//こっちは成功するが
+		m_ADDR.sin_family = AF_INET;  //IPv4
+		m_ADDR.sin_port = htons(checkPort);   //通信ポート番号設定
+		m_ADDR.sin_addr.S_un.S_addr = INADDR_ANY; // INADDR_ANYはすべてのアドレスからのパケットを受信する
+		return (bind(this->m_Handle, (sockaddr*)&m_ADDR, sizeof(m_ADDR)) == 0) ? TRUE : FALSE;//こっちは成功するが
 	}
 	//データを受信
-	int UDPCore::RecvDataUDP(IPDATA* RecvIP, int SendPort, int* RecvPort, void* Buffer, int Length, int Peek) {
+	int UDPCore::RecvDataUDP(IPDATA* RecvIP, int SendPort, int* RecvPort, void* Buffer, int Length, bool Peek) {
 		if (!IsActive()) { return InvalidID; }
 		// ここでノンブロッキングに設定しています
 		u_long val = 1;
 		ioctlsocket(this->m_Handle, FIONBIO, &val);
 
-		sockaddr_in addr;
-		addr.sin_family = AF_INET;  //IPv4
-		addr.sin_port = htons(SendPort);   //通信ポート番号設定
-		addr.sin_addr.S_un.S_addr = INADDR_ANY; // INADDR_ANYはすべてのアドレスからのパケットを受信する
-		int ADDRLen = sizeof(addr);
-		//a;
-		int Ansewr = recvfrom(this->m_Handle, (char*)Buffer, Length, (Peek == TRUE) ? MSG_PEEK : 0, (SOCKADDR*)&addr, & ADDRLen);
+		int ADDRLen = sizeof(m_ADDR);
+		int Ansewr = recvfrom(this->m_Handle, (char*)Buffer, Length, (Peek) ? MSG_PEEK : 0, (SOCKADDR*)&m_ADDR, &ADDRLen);
 		//こっちは失敗して10057が戻る
 		int Error = WSAGetLastError();
-		WSANOTINITIALISED;
+		WSAENOTCONN;//ソケットが接続されておらず、(sendto 呼び出しを使用してデータグラム ソケットに送信する場合) アドレスが指定されなかったため、データの送信または受信の要求は拒否されました。
 		if (Ansewr >= 1) {
-			*RecvPort = addr.sin_port;
-			RecvIP->d1 = addr.sin_addr.S_un.S_un_b.s_b1;
-			RecvIP->d2 = addr.sin_addr.S_un.S_un_b.s_b2;
-			RecvIP->d3 = addr.sin_addr.S_un.S_un_b.s_b3;
-			RecvIP->d4 = addr.sin_addr.S_un.S_un_b.s_b4;
+			*RecvPort = m_ADDR.sin_port;
+			RecvIP->d1 = m_ADDR.sin_addr.S_un.S_un_b.s_b1;
+			RecvIP->d2 = m_ADDR.sin_addr.S_un.S_un_b.s_b2;
+			RecvIP->d3 = m_ADDR.sin_addr.S_un.S_un_b.s_b3;
+			RecvIP->d4 = m_ADDR.sin_addr.S_un.S_un_b.s_b4;
 			return Ansewr;
 		}
 		return InvalidID;
@@ -196,17 +188,15 @@ namespace NetWork {
 	//データを送信
 	int UDPCore::SendDataUDP(IPDATA SendIP, int SendPort, const void* Buffer, int Length) {
 		if (!IsActive()) { return FALSE; }
-		//a;
-		SOCKADDR_IN addr{};
-		addr.sin_family = AF_INET;
-		addr.sin_port = htons(SendPort);// 待ち受けポート番号
+		m_ADDR.sin_family = AF_INET;
+		m_ADDR.sin_port = htons(SendPort);// 待ち受けポート番号
 		// 送信アドレスを設定
-		addr.sin_addr.S_un.S_un_b.s_b1 = SendIP.d1;
-		addr.sin_addr.S_un.S_un_b.s_b2 = SendIP.d2;
-		addr.sin_addr.S_un.S_un_b.s_b3 = SendIP.d3;
-		addr.sin_addr.S_un.S_un_b.s_b4 = SendIP.d4;
+		m_ADDR.sin_addr.S_un.S_un_b.s_b1 = SendIP.d1;
+		m_ADDR.sin_addr.S_un.S_un_b.s_b2 = SendIP.d2;
+		m_ADDR.sin_addr.S_un.S_un_b.s_b3 = SendIP.d3;
+		m_ADDR.sin_addr.S_un.S_un_b.s_b4 = SendIP.d4;
 
-		sendto(this->m_Handle, (char*)Buffer, Length, 0, (sockaddr*)&addr, sizeof(addr));//addrに文字列送信
+		sendto(this->m_Handle, (char*)Buffer, Length, 0, (sockaddr*)&m_ADDR, sizeof(m_ADDR));//m_ADDRに文字列送信
 		return FALSE;
 	}
 }

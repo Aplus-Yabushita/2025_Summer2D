@@ -92,9 +92,46 @@ namespace NetWork {
 	struct  IPDATA {
 		unsigned char			d1, d2, d3, d4;				// アドレス値
 	};
+
+	//ベースになったDXLIB版
+	/*
+	class UDPCoreDxLib {
+		int			m_Handle{ InvalidID };				// ネットワークハンドル
+	public:
+		const auto			IsActive(void) const noexcept { return (this->m_Handle != InvalidID); }
+	public:
+		bool			InitUDP(int PORT) noexcept {
+			if (!IsActive()) {
+				this->m_Handle = MakeUDPSocket(PORT);
+			}
+			return IsActive();
+		}
+		void			DisposeUDP(void) noexcept {
+			if (IsActive()) {
+				DeleteUDPSocket(this->m_Handle);	// ＵＤＰソケットハンドルの削除
+				this->m_Handle = InvalidID;
+			}
+		}
+	public:
+		int CheckRecvUDP() {
+			if (!IsActive()) { return InvalidID; }
+			return CheckNetWorkRecvUDP(this->m_Handle);
+		}
+		//データを受信
+		int RecvDataUDP(IPDATA* RecvIP, int SendPort, int* RecvPort, void* Buffer, int Length, bool Peek) {
+			if (!IsActive()) { return InvalidID; }
+			return NetWorkRecvUDP(this->m_Handle, RecvIP, &RecvPort, Buffer, Length, Peek ? TRUE : FALSE);
+		}
+		//データを送信
+		int SendDataUDP(IPDATA SendIP, int SendPort, const void* Buffer, int Length) {
+			if (!IsActive()) { return InvalidID; }
+			return NetWorkSendUDP(this->m_Handle, SendIP, SendPort, &Buffer, Length);
+		}
+	};
+	//*/
+	//UDP通信の中枢を取り扱うクラス
 	class UDPCore {
 		SOCKET		m_Handle{ InvalidSOCKETID };				// ネットワークハンドル
-		SOCKADDR_IN m_ADDR;
 	public:
 		const bool	IsActive(void) const noexcept { return (this->m_Handle != InvalidSOCKETID); }
 	public:

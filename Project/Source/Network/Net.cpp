@@ -145,7 +145,7 @@ namespace NetWork {
 		WSACleanup();
 		ans = (int)WSAStartup(MAKEWORD(2, 0), &wsaData);   //MAKEWORD(2, 0)はwinsockのバージョン2.0ってこと
 
-		this->m_Handle = (SOCKET)socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);  //AF_INETはIPv4、SOCK_STREAMはUDP通信、0は？
+		this->m_Handle = (SOCKET)socket(AF_INET, SOCK_DGRAM, 0);  //AF_INETはIPv4、SOCK_STREAMはUDP通信、0は？
 	}
 	//ハンドルを破棄
 	void UDPCore::DisposeUDP() {
@@ -158,10 +158,11 @@ namespace NetWork {
 	int UDPCore::CheckRecvUDP(int checkPort) {
 		if (!IsActive()) { return FALSE; }
 		// アドレス等格納
-		m_ADDR.sin_family = AF_INET;  //IPv4
-		m_ADDR.sin_port = htons(checkPort);   //通信ポート番号設定
-		m_ADDR.sin_addr.S_un.S_addr = INADDR_ANY; // INADDR_ANYはすべてのアドレスからのパケットを受信する
-		return (bind(this->m_Handle, (sockaddr*)&m_ADDR, sizeof(m_ADDR)) == 0) ? TRUE : FALSE;//こっちは成功するが
+		SOCKADDR_IN Addr;
+		Addr.sin_family = AF_INET;  //IPv4
+		Addr.sin_port = htons(checkPort);   //通信ポート番号設定
+		Addr.sin_addr.S_un.S_addr = INADDR_ANY; // INADDR_ANYはすべてのアドレスからのパケットを受信する
+		return (bind(this->m_Handle, (sockaddr*)&Addr, sizeof(Addr)) == 0) ? TRUE : FALSE;//こっちは成功するが
 	}
 	//データを受信
 	int UDPCore::RecvDataUDP(IPDATA* RecvIP, int SendPort, int* RecvPort, void* Buffer, int Length, bool Peek) {
@@ -170,33 +171,55 @@ namespace NetWork {
 		u_long val = 1;
 		ioctlsocket(this->m_Handle, FIONBIO, &val);
 
-		int ADDRLen = sizeof(m_ADDR);
-		int Ansewr = recvfrom(this->m_Handle, (char*)Buffer, Length, (Peek) ? MSG_PEEK : 0, (SOCKADDR*)&m_ADDR, &ADDRLen);
-		//こっちは失敗して10057が戻る
-		int Error = WSAGetLastError();
-		WSAENOTCONN;//ソケットが接続されておらず、(sendto 呼び出しを使用してデータグラム ソケットに送信する場合) アドレスが指定されなかったため、データの送信または受信の要求は拒否されました。
-		if (Ansewr >= 1) {
-			*RecvPort = m_ADDR.sin_port;
-			RecvIP->d1 = m_ADDR.sin_addr.S_un.S_un_b.s_b1;
-			RecvIP->d2 = m_ADDR.sin_addr.S_un.S_un_b.s_b2;
-			RecvIP->d3 = m_ADDR.sin_addr.S_un.S_un_b.s_b3;
-			RecvIP->d4 = m_ADDR.sin_addr.S_un.S_un_b.s_b4;
-			return Ansewr;
+		fd_set readfds;
+		FD_ZERO(&readfds);
+		FD_SET(this->m_Handle, &readfds);
+
+		timeval timeout{};
+		timeout.tv_sec = 0;
+		timeout.tv_usec = 16000;//16ms待つ
+
+		int ret = select(0, &readfds, NULL, NULL, &timeout);
+		if (ret > 0 && FD_ISSET(this->m_Handle, &readfds)) {
+			// recvfromで何か受け取れる
+			SOCKADDR_IN Addr;
+			Addr.sin_family = AF_INET;  //IPv4
+			Addr.sin_port = htons(SendPort);   //通信ポート番号設定
+			Addr.sin_addr.S_un.S_addr = INADDR_ANY; // INADDR_ANYはすべてのアドレスからのパケットを受信する
+			int ADDRLen = sizeof(Addr);
+			int Ansewr = recvfrom(this->m_Handle, (char*)Buffer, Length, (Peek) ? MSG_PEEK : 0, (SOCKADDR*)&Addr, &ADDRLen);
+			int Error = WSAGetLastError();
+			if (Ansewr >= 1) {
+				*RecvPort = Addr.sin_port;
+				RecvIP->d1 = Addr.sin_addr.S_un.S_un_b.s_b1;
+				RecvIP->d2 = Addr.sin_addr.S_un.S_un_b.s_b2;
+				RecvIP->d3 = Addr.sin_addr.S_un.S_un_b.s_b3;
+				RecvIP->d4 = Addr.sin_addr.S_un.S_un_b.s_b4;
+				return Ansewr;
+			}
+		}
+		else if (ret == 0) {
+			// タイムアウト
+		}
+		else {
+			// エラー
+			int Error = WSAGetLastError();
 		}
 		return InvalidID;
 	}
 	//データを送信
 	int UDPCore::SendDataUDP(IPDATA SendIP, int SendPort, const void* Buffer, int Length) {
 		if (!IsActive()) { return FALSE; }
-		m_ADDR.sin_family = AF_INET;
-		m_ADDR.sin_port = htons(SendPort);// 待ち受けポート番号
+		SOCKADDR_IN Addr;
+		Addr.sin_family = AF_INET;
+		Addr.sin_port = htons(SendPort);// 待ち受けポート番号
 		// 送信アドレスを設定
-		m_ADDR.sin_addr.S_un.S_un_b.s_b1 = SendIP.d1;
-		m_ADDR.sin_addr.S_un.S_un_b.s_b2 = SendIP.d2;
-		m_ADDR.sin_addr.S_un.S_un_b.s_b3 = SendIP.d3;
-		m_ADDR.sin_addr.S_un.S_un_b.s_b4 = SendIP.d4;
+		Addr.sin_addr.S_un.S_un_b.s_b1 = SendIP.d1;
+		Addr.sin_addr.S_un.S_un_b.s_b2 = SendIP.d2;
+		Addr.sin_addr.S_un.S_un_b.s_b3 = SendIP.d3;
+		Addr.sin_addr.S_un.S_un_b.s_b4 = SendIP.d4;
 
-		sendto(this->m_Handle, (char*)Buffer, Length, 0, (sockaddr*)&m_ADDR, sizeof(m_ADDR));//m_ADDRに文字列送信
+		sendto(this->m_Handle, (char*)Buffer, Length, 0, (sockaddr*)&Addr, sizeof(Addr));//Addrに文字列送信
 		return FALSE;
 	}
 }

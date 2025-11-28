@@ -2,10 +2,16 @@
 
 #include "../PageParent.h"
 #include "../../UI/Button/UIButton.h"
+#include "../../Network/Net.hpp"
+
+struct PlayerMoveData {
+	Algorithm::InputControl				m_Input{};
+	Algorithm::MoveInfo					m_move{};
+	int32_t						m_FreeData[10]{};
+};
 
 class MainMenu :public PageParent {
-	std::vector<ButtonParts> m_Button;
-	bool m_IsEndPage = false;
+	std::array<PlayerMoveData, 2> Player;
 public:
 	MainMenu(void) noexcept {}
 	MainMenu(const MainMenu&) {}
@@ -17,6 +23,6 @@ public:
 	void Init() override;
 	void Update() override;
 	void Draw() override;
-	bool IsEndPage() override { return m_IsEndPage; }
+	bool IsEndPage() override { return false; }
 	void Dispose()  override;
 };

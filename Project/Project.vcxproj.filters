@@ -34,12 +34,6 @@
     <Filter Include="ソース ファイル\Page\MainMenu">
       <UniqueIdentifier>{4d92cb2f-2d25-4b98-bc30-c044f26f5fdd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Page\Inventory">
-      <UniqueIdentifier>{48c011b9-3f29-4691-bdc6-0f5ac24c1ddd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Page\Shop">
-      <UniqueIdentifier>{9133fcd7-c7f7-4468-b3d4-5234aed36ebe}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\UI\UIScrollBar">
       <UniqueIdentifier>{d390adf5-b18c-4139-b7e4-33ebd3760cff}</UniqueIdentifier>
     </Filter>
@@ -95,12 +89,6 @@
     </ClInclude>
     <ClInclude Include="Source\Page\PageManager.h">
       <Filter>ソース ファイル\Page</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Page\Inventory\Inventory.h">
-      <Filter>ソース ファイル\Page\Inventory</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Page\Shop\Shop.h">
-      <Filter>ソース ファイル\Page\Shop</Filter>
     </ClInclude>
     <ClInclude Include="Source\UI\ScrollBar\UIScrollBar.h">
       <Filter>ソース ファイル\UI\UIScrollBar</Filter>
@@ -178,12 +166,6 @@
     </ClCompile>
     <ClCompile Include="Source\Page\PageManager.cpp">
       <Filter>ソース ファイル\Page</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Page\Inventory\Inventory.cpp">
-      <Filter>ソース ファイル\Page\Inventory</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Page\Shop\Shop.cpp">
-      <Filter>ソース ファイル\Page\Shop</Filter>
     </ClCompile>
     <ClCompile Include="Source\UI\ScrollBar\UIScrollBar.cpp">
       <Filter>ソース ファイル\UI\UIScrollBar</Filter>

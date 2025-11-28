@@ -145,11 +145,9 @@
     <ClInclude Include="Source\json.hpp" />
     <ClInclude Include="Source\Network\Net.hpp" />
     <ClInclude Include="Source\Network\NetBrowser.hpp" />
-    <ClInclude Include="Source\Page\Inventory\Inventory.h" />
     <ClInclude Include="Source\Page\MainMenu\MainMenu.h" />
     <ClInclude Include="Source\Page\PageManager.h" />
     <ClInclude Include="Source\Page\PageParent.h" />
-    <ClInclude Include="Source\Page\Shop\Shop.h" />
     <ClInclude Include="Source\UI\Button\UIButton.h" />
     <ClInclude Include="Source\UI\ItemList\BuyItemData.h" />
     <ClInclude Include="Source\UI\ItemList\UIItemColumn.h" />
@@ -173,11 +171,9 @@
     <ClCompile Include="Source\Direct2DLib.cpp" />
     <ClCompile Include="Source\Network\Net.cpp" />
     <ClCompile Include="Source\Network\NetBrowser.cpp" />
-    <ClCompile Include="Source\Page\Inventory\Inventory.cpp" />
     <ClCompile Include="Source\Page\MainMenu\MainMenu.cpp" />
     <ClCompile Include="Source\Page\PageManager.cpp" />
     <ClCompile Include="Source\Page\PageParent.cpp" />
-    <ClCompile Include="Source\Page\Shop\Shop.cpp" />
     <ClCompile Include="Source\UI\Button\UIButton.cpp" />
     <ClCompile Include="Source\UI\ItemList\BuyItemData.cpp" />
     <ClCompile Include="Source\UI\ItemList\UIItemColumn.cpp" />

@@ -15,6 +15,7 @@ enum class DrawType {
 	DrawExtendBMP,
 	Draw9SliceBMP,
 	DrawFont,
+	DrawLine,
 };
 
 struct DrawParam {
@@ -72,6 +73,9 @@ public:
 			case DrawType::DrawEllipse:
 				DrawEllipse(d);
 				break;
+			case DrawType::DrawLine:
+				DrawLine(d);
+				break;
 			case DrawType::DrawRect:
 				DrawRect(d);
 				break;
@@ -105,6 +109,18 @@ private://実際にWN_PAINTで実行する描画命令
 		pRenderTarget->CreateSolidColorBrush(param.m_ColorParam.at(0), &pBrush);
 		if (pBrush) {
 			pRenderTarget->FillEllipse(ellipse, pBrush);
+		}
+		SafeRelease(&pBrush);
+	}
+	void DrawLine(const DrawParam& param) const {
+		D2D1_POINT_2F		  pos1{};
+		D2D1_POINT_2F		  pos2{};
+		ID2D1SolidColorBrush* pBrush{ nullptr };
+		pos1 = D2D1::Point2F(param.m_FloatParam.at(0), param.m_FloatParam.at(1));
+		pos2 = D2D1::Point2F(param.m_FloatParam.at(2), param.m_FloatParam.at(3));
+		pRenderTarget->CreateSolidColorBrush(param.m_ColorParam.at(0), &pBrush);
+		if (pBrush) {
+			pRenderTarget->DrawLine(pos1, pos2, pBrush, param.m_FloatParam.at(4));
 		}
 		SafeRelease(&pBrush);
 	}
@@ -164,6 +180,17 @@ public://外からパラメーターを登録する
 		pPtr->m_FloatParam.at(1) = y;
 		pPtr->m_FloatParam.at(2) = xradius;
 		pPtr->m_FloatParam.at(3) = yradius;
+		pPtr->m_ColorParam.at(0) = FillColor;
+	}
+	//楕円を書く
+	void SetLine(float x1, float y1, float x2, float y2, float scale, D2D1_COLOR_F FillColor) {
+		auto* pPtr = m_List.AddBack();
+		pPtr->m_DrawType = DrawType::DrawLine;
+		pPtr->m_FloatParam.at(0) = x1;
+		pPtr->m_FloatParam.at(1) = y1;
+		pPtr->m_FloatParam.at(2) = x2;
+		pPtr->m_FloatParam.at(3) = y2;
+		pPtr->m_FloatParam.at(4) = scale;
 		pPtr->m_ColorParam.at(0) = FillColor;
 	}
 	//矩形を書く

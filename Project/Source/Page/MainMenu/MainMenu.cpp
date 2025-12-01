@@ -8,13 +8,24 @@
 #include "../../Input/Input.h"
 
 void MainMenu::Init() {
-	for (int loop = 0; loop < Player.size(); ++loop) {
-		Player[loop].m_move.pos.x = 100.f + loop * 100.f;
-		Player[loop].m_move.pos.y = 100.f;
-		Player[loop].m_move.vec.x = 0.f;
-		Player[loop].m_move.vec.x = 0.f;
-		Player[loop].m_move.repos = Player[loop].m_move.pos;
+	for (int loop = 0; loop < RigidBody.size(); ++loop) {
+		RigidBody[loop].Pos.x = 10.f + loop * 10.f;
+		RigidBody[loop].Pos.y = 10.f;
+		RigidBody[loop].Vec.x = 0.f;
+		RigidBody[loop].Vec.y = 0.f;
+		RigidBody[loop].Radius = 1.f;
 	}
+	FixedLine[0].Pos1.x = 5.f;
+	FixedLine[0].Pos1.y = 20.f;
+	FixedLine[0].Pos2.x = 30.f;
+	FixedLine[0].Pos2.y = 30.f;
+	FixedLine[0].Width = 1.f;
+
+	FixedLine[1].Pos1.x = 40.f;
+	FixedLine[1].Pos1.y = 20.f;
+	FixedLine[1].Pos2.x = 15.f;
+	FixedLine[1].Pos2.y = 30.f;
+	FixedLine[1].Width = 1.f;
 }
 
 void MainMenu::Update() {
@@ -22,30 +33,29 @@ void MainMenu::Update() {
 	auto GetID = [&]() {
 		return 0;
 		};
-
-	Player[GetID()].m_move.vec.x = 0.f;
-	Player[GetID()].m_move.vec.y = 0.f;
-	Player[GetID()].m_move.vec.z = 0.f;
-
-	Player[GetID()].m_Input.KeyFlag = 0;
+	//*
 	if (Input::Instance()->GetKeyPress(VK_DOWN)) {
-		Player[GetID()].m_Input.KeyFlag |= 1 << 0;
-		Player[GetID()].m_move.vec.y = 1.f;
+		RigidBody[GetID()].Vec.y = 1.f;
 	}
 	if (Input::Instance()->GetKeyPress(VK_UP)) {
-		Player[GetID()].m_Input.KeyFlag |= 1 << 1;
-		Player[GetID()].m_move.vec.y = -1.f;
+		RigidBody[GetID()].Vec.y = -1.f;
 	}
 	if (Input::Instance()->GetKeyPress(VK_LEFT)) {
-		Player[GetID()].m_Input.KeyFlag |= 1 << 2;
-		Player[GetID()].m_move.vec.x = -1.f;
+		RigidBody[GetID()].Vec.x -= 1.f;
 	}
 	if (Input::Instance()->GetKeyPress(VK_RIGHT)) {
-		Player[GetID()].m_Input.KeyFlag |= 1 << 3;
-		Player[GetID()].m_move.vec.x = 1.f;
+		RigidBody[GetID()].Vec.x += 1.f;
 	}
-	Player[GetID()].m_move.repos = Player[GetID()].m_move.pos;
-	Player[GetID()].m_move.pos = Player[GetID()].m_move.pos + Player[GetID()].m_move.vec * (1000.f / 60.f);
+	//*/
+	RigidBody[GetID()].Vec.y += 9.8f;
+
+	auto Target = RigidBody[GetID()].Pos + RigidBody[GetID()].Vec * ((1000.f / 60.f) / (60.f * 60.f));
+	{
+		//壁判定//TODO
+		for (auto& f : FixedLine) {
+		}
+	}
+	RigidBody[GetID()].Pos = Target;
 }
 
 void MainMenu::Draw() {
@@ -57,9 +67,19 @@ void MainMenu::Draw() {
 		L"メインページ",
 		D2D1::ColorF(D2D1::ColorF::Black), FontPool::Instance()->GetFont(25, FontCenterX::Left, FontCenterY::Top).get());
 
-	for (int loop = 0; loop < Player.size(); ++loop) {
-		Direct2DLib::Instance()->GetDrawSystem()->SetEllipse(Player[loop].m_move.pos.x, Player[loop].m_move.pos.y, 50.f, 50.f,
-			(loop == 0) ? D2D1::ColorF(D2D1::ColorF::Green) : D2D1::ColorF(D2D1::ColorF::Red));
+	float scale = 10.f;
+
+	for (auto& r : RigidBody) {
+		Direct2DLib::Instance()->GetDrawSystem()->SetEllipse(r.Pos.x * scale, r.Pos.y * scale, r.Radius * scale, r.Radius * scale,
+			D2D1::ColorF(D2D1::ColorF::Green));
+	}
+	for (auto& f : FixedLine) {
+		Direct2DLib::Instance()->GetDrawSystem()->SetLine(
+			f.Pos1.x * scale, f.Pos1.y * scale,
+			f.Pos2.x * scale, f.Pos2.y * scale,
+			f.Width * scale,
+			D2D1::ColorF(D2D1::ColorF::Red)
+		);
 	}
 }
 

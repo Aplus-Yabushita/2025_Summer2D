@@ -4,14 +4,21 @@
 #include "../../UI/Button/UIButton.h"
 #include "../../Network/Net.hpp"
 
-struct PlayerMoveData {
-	Algorithm::InputControl				m_Input{};
-	Algorithm::MoveInfo					m_move{};
-	int32_t						m_FreeData[10]{};
+struct RigidBodyMoveData {
+	Algorithm::Vector3DX	Pos{};
+	Algorithm::Vector3DX	Vec{};
+	float					Radius{};
+};
+
+struct FixedLineData {
+	Algorithm::Vector3DX	Pos1{};
+	Algorithm::Vector3DX	Pos2{};
+	float					Width{};
 };
 
 class MainMenu :public PageParent {
-	std::array<PlayerMoveData, 2> Player;
+	std::array<RigidBodyMoveData, 2> RigidBody;
+	std::array<FixedLineData, 2> FixedLine;
 public:
 	MainMenu(void) noexcept {}
 	MainMenu(const MainMenu&) {}

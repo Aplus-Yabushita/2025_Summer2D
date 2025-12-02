@@ -80,7 +80,7 @@ struct FixedLineData {
 };
 
 class MainMenu :public PageParent {
-	std::array<RigidBodyMoveData, 10> RigidBody;
+	std::array<RigidBodyMoveData, 50> RigidBody;
 	std::array<FixedLineData, 4> FixedLine;
 public:
 	MainMenu(void) noexcept {}

@@ -204,13 +204,13 @@ static Algorithm::Vector3D calcLineNormal(const Algorithm::Vector3D& a, const Al
 
 void MainMenu::Init() {
 	for (int loop = 0; loop < RigidBody.size(); ++loop) {
-		RigidBody[loop].Pos.x = 15.f + (loop % 5) * 4.f;
-		RigidBody[loop].Pos.y = 10.f + (loop / 5) * 4.f;
+		RigidBody[loop].Pos.x = 15.f + (loop % 10) * 2.f;
+		RigidBody[loop].Pos.y = 10.f + (loop / 10) * 2.f;
 		RigidBody[loop].Pos.z = 0.f;
 		RigidBody[loop].Vec.x = 0.f;
 		RigidBody[loop].Vec.y = 0.f;
 		RigidBody[loop].Vec.z = 0.f;
-		RigidBody[loop].Radius = 2.f;
+		RigidBody[loop].Radius = 1.f;
 	}
 	FixedLine[0].Pos1.x = 5.f;
 	FixedLine[0].Pos1.y = 20.f;
@@ -259,9 +259,9 @@ void MainMenu::Update() {
 		auto Before = r.Pos;
 		auto After = Before + r.Vec * ((1000.f / 60.f) / (60.f * 60.f));
 		{
-			SEGMENT_SEGMENT_RESULT res;
 			//壁判定
 			for (auto& f : FixedLine) {
+				SEGMENT_SEGMENT_RESULT res;
 				Segment_Segment_Analyse(f.Pos1, f.Pos2, Before, After, &res);
 				float Radius = (f.Width / 2.f + r.Radius);
 				if (res.SegA_SegB_MinDist_Square < Radius * Radius) {
@@ -272,9 +272,7 @@ void MainMenu::Update() {
 						if (Algorithm::Vector3D::VCross(V2, V1).z > 0.001f) {
 							continue;
 						}
-						auto Cross = Algorithm::Vector3D::VCross(V1, V2).z;
-						Before = CrossPoint - V2 * (Radius / Cross);
-						//After = After - (After-Before).VSize() * Cross;
+						Before = CrossPoint - V2 * (Radius / Algorithm::Vector3D::VCross(V1, V2).z);
 
 						auto L = (After - Before) * -1.f;
 						auto normal = calcLineNormal(f.Pos1, f.Pos2);
@@ -283,9 +281,36 @@ void MainMenu::Update() {
 						float keepsize = r.Vec.VSize();
 						r.Vec = (After - Before) * (1.f / ((1000.f / 60.f) / (60.f * 60.f)));
 						r.Vec = r.Vec.VNorm() * std::min(r.Vec.VSize(), keepsize);
+						After = Before + r.Vec * ((1000.f / 60.f) / (60.f * 60.f));
 
 						if ((After - Before).VSize() < 0.001f) { break; }
 					}
+				}
+			}
+			//相互判定
+			for (auto& r2 : RigidBody) {
+				if (&r == &r2) { continue; }
+				SEGMENT_POINT_RESULT res;
+				Segment_Point_Analyse(Before, After, r2.Pos, &res);
+				float Radius = (r.Radius + r2.Radius);
+				if (res.Seg_Point_MinDist_Square < Radius * Radius) {
+					Algorithm::Vector3D CrossPoint;
+					auto V1 = (r2.Pos - r.Pos).VNorm();
+					auto V2 = (After - Before).VNorm();
+					Before = res.Seg_MinDist_Pos - V2 * (Radius * Algorithm::Vector3D::VDot(V1, V2))*0.05f;//TODO:本来は相手に接するはずだが変な値が返るので適当な値に
+
+					auto L = (After - Before) * -1.f;
+					auto normal = V1;
+					After = After + (normal * (2.0f * Algorithm::Vector3D::VDot(L, normal)));
+
+					//After = Before;//一旦ベクトルを無効化
+
+					float keepsize = r.Vec.VSize();
+					r.Vec = (After - Before) * (1.f / ((1000.f / 60.f) / (60.f * 60.f)));
+					r.Vec = r.Vec.VNorm() * std::min(r.Vec.VSize(), keepsize);
+					After = Before + r.Vec * ((1000.f / 60.f) / (60.f * 60.f));
+
+					if ((After - Before).VSize() < 0.001f) { break; }
 				}
 			}
 		}

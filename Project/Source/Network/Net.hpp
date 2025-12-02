@@ -40,6 +40,17 @@ namespace Algorithm {
 			Answer.z = this->z * per;
 			return Answer;
 		}
+	public:
+		// ベクトルのサイズの２乗
+		inline float		VSquareSize()
+		{
+			return this->x * this->x + this->y * this->y + this->z * this->z;
+		}
+		// ベクトルの内積
+		static float		VDot(const Algorithm::Vector3DX& In1, const Algorithm::Vector3DX& In2)
+		{
+			return In1.x * In2.x + In1.y * In2.y + In1.z * In2.z;
+		}
 	};
 	class InputControl {
 	public:

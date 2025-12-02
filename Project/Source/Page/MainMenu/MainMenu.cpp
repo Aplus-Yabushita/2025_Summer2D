@@ -12,20 +12,20 @@ struct SEGMENT_SEGMENT_RESULT {
 	float					SegA_SegB_MinDist_Square;		// 線分Ａと線分Ｂが最も接近する座標間の距離の二乗
 	float					SegA_MinDist_Pos1_Pos2_t;		// 線分Ａと線分Ｂに最も接近する座標の線分Ａの t ( 0.0f ～ 1.0f 、最近点座標 = ( SegAPos2 - SegAPos1 ) * t + SegAPos1 )
 	float					SegB_MinDist_Pos1_Pos2_t;		// 線分Ｂが線分Ａに最も接近する座標の線分Ｂの t ( 0.0f ～ 1.0f 、最近点座標 = ( SegBPos2 - SegBPos1 ) * t + SegBPos1 )
-	Algorithm::Vector3DX					SegA_MinDist_Pos;				// 線分Ａが線分Ｂに最も接近する線分Ａ上の座標
-	Algorithm::Vector3DX					SegB_MinDist_Pos;				// 線分Ｂが線分Ａに最も接近する線分Ｂ上の座標
+	Algorithm::Vector3D					SegA_MinDist_Pos;				// 線分Ａが線分Ｂに最も接近する線分Ａ上の座標
+	Algorithm::Vector3D					SegB_MinDist_Pos;				// 線分Ｂが線分Ａに最も接近する線分Ｂ上の座標
 };
 // 関数 Segment_Point_Analyse の結果を受け取る為の構造体
 struct SEGMENT_POINT_RESULT {
 	float					Seg_Point_MinDist_Square;		// 線分と点が最も接近する座標間の距離の二乗
 	float					Seg_MinDist_Pos1_Pos2_t;		// 線分が点に最も接近する座標の線分の t ( 0.0f ～ 1.0f 、最近点座標 = ( SegPos2 - SegPos1 ) * t + SegPos1 )
-	Algorithm::Vector3DX	Seg_MinDist_Pos;				// 線分が点に最も接近する線分上の座標
+	Algorithm::Vector3D	Seg_MinDist_Pos;				// 線分が点に最も接近する線分上の座標
 };
 
-void Segment_Point_Analyse(const Algorithm::Vector3DX& SegmentPos1, const Algorithm::Vector3DX& SegmentPos2, const Algorithm::Vector3DX& PointPos, SEGMENT_POINT_RESULT* Result)
+static void Segment_Point_Analyse(const Algorithm::Vector3D& SegmentPos1, const Algorithm::Vector3D& SegmentPos2, const Algorithm::Vector3D& PointPos, SEGMENT_POINT_RESULT* Result)
 {
-	Algorithm::Vector3DX Seg1_2 = SegmentPos2 - SegmentPos1;
-	float DotSeg1_2_Pnt = Algorithm::Vector3DX::VDot(Seg1_2, PointPos - SegmentPos1);
+	Algorithm::Vector3D Seg1_2 = SegmentPos2 - SegmentPos1;
+	float DotSeg1_2_Pnt = Algorithm::Vector3D::VDot(Seg1_2, PointPos - SegmentPos1);
 	float SizeSquSeg1_2 = Seg1_2.VSquareSize();
 	if (DotSeg1_2_Pnt <= 0.0f) {
 		Result->Seg_MinDist_Pos1_Pos2_t = 0.0f;
@@ -46,23 +46,23 @@ void Segment_Point_Analyse(const Algorithm::Vector3DX& SegmentPos1, const Algori
 	Result->Seg_Point_MinDist_Square = (PointPos - Result->Seg_MinDist_Pos).VSquareSize();
 }
 
-void Segment_Segment_Analyse(const Algorithm::Vector3DX& SegmentAPos1, const Algorithm::Vector3DX& SegmentAPos2, const Algorithm::Vector3DX& SegmentBPos1, const Algorithm::Vector3DX& SegmentBPos2, SEGMENT_SEGMENT_RESULT* Result)
+static void Segment_Segment_Analyse(const Algorithm::Vector3D& SegmentAPos1, const Algorithm::Vector3D& SegmentAPos2, const Algorithm::Vector3D& SegmentBPos1, const Algorithm::Vector3D& SegmentBPos2, SEGMENT_SEGMENT_RESULT* Result)
 {
-	float t = 0.0f;
+	float t = 0.f;
 
-	Algorithm::Vector3DX segA1_2 = SegmentAPos2 - SegmentAPos1;
-	Algorithm::Vector3DX segB1_2 = SegmentBPos2 - SegmentBPos1;
-	Algorithm::Vector3DX segB1_A1 = SegmentAPos1 - SegmentBPos1;
-	float a = Algorithm::Vector3DX::VDot(segA1_2, segA1_2);
-	float b = -Algorithm::Vector3DX::VDot(segA1_2, segB1_2);
+	Algorithm::Vector3D segA1_2 = SegmentAPos2 - SegmentAPos1;
+	Algorithm::Vector3D segB1_2 = SegmentBPos2 - SegmentBPos1;
+	Algorithm::Vector3D segB1_A1 = SegmentAPos1 - SegmentBPos1;
+	float a = Algorithm::Vector3D::VDot(segA1_2, segA1_2);
+	float b = -Algorithm::Vector3D::VDot(segA1_2, segB1_2);
 	float c = -b;
-	float d = -Algorithm::Vector3DX::VDot(segB1_2, segB1_2);
-	float e = -Algorithm::Vector3DX::VDot(segA1_2, segB1_A1);
-	float f = -Algorithm::Vector3DX::VDot(segB1_2, segB1_A1);
+	float d = -Algorithm::Vector3D::VDot(segB1_2, segB1_2);
+	float e = -Algorithm::Vector3D::VDot(segA1_2, segB1_A1);
+	float f = -Algorithm::Vector3D::VDot(segB1_2, segB1_A1);
 
 	// SegmentAPos1 - SegmentAPos2 または SegmentBPos1 - SegmentBPos2 の距離が限りなくゼロに近いかどうかのチェック
-	float tmpA = a < 0.0f ? -a : a;
-	float tmpB = d < 0.0f ? -d : d;
+	float tmpA = a < 0.f ? -a : a;
+	float tmpB = d < 0.f ? -d : d;
 	if (tmpA < 0.00000001f)
 	{
 		Result->SegA_MinDist_Pos1_Pos2_t = 0.0f;
@@ -175,58 +175,122 @@ void Segment_Segment_Analyse(const Algorithm::Vector3DX& SegmentAPos1, const Alg
 	return;
 }
 
+//Z==0を前提とした交点を求める
+static bool Intersection2D(const Algorithm::Vector3D& a, const Algorithm::Vector3D& b, const Algorithm::Vector3D& c, const Algorithm::Vector3D& d, Algorithm::Vector3D* ans) {
+	float deno = Algorithm::Vector3D::VCross(b - a, d - c).z;
+	if (deno == 0.f) {
+		// 線分が平行
+		return false;
+	}
+	float s = Algorithm::Vector3D::VCross(c - a, d - c).z / deno;
+	//線分の場合は必須
+	/*
+	float t = Algorithm::Vector3D::VCross(b - a, a - c).z / deno;
+	if (s < 0.f || 1.f < s || t < 0.f || 1.f < t) {
+		// 線分が交差していない
+		return false;
+	}
+	//*/
+	*ans = a + (b - a) * s;
+	return true;
+}
+
+//
+static Algorithm::Vector3D calcLineNormal(const Algorithm::Vector3D& a, const Algorithm::Vector3D& b) {
+	auto dirVec = Algorithm::Vector3D(a.x - b.x, a.y - b.y, 0.f);
+	auto normal = Algorithm::Vector3D(-dirVec.y, dirVec.x, 0.f);
+	return normal.VNorm();
+}
+
 void MainMenu::Init() {
 	for (int loop = 0; loop < RigidBody.size(); ++loop) {
-		RigidBody[loop].Pos.x = 10.f + loop * 10.f;
-		RigidBody[loop].Pos.y = 10.f;
+		RigidBody[loop].Pos.x = 15.f + (loop % 5) * 4.f;
+		RigidBody[loop].Pos.y = 10.f + (loop / 5) * 4.f;
+		RigidBody[loop].Pos.z = 0.f;
 		RigidBody[loop].Vec.x = 0.f;
 		RigidBody[loop].Vec.y = 0.f;
-		RigidBody[loop].Radius = 1.f;
+		RigidBody[loop].Vec.z = 0.f;
+		RigidBody[loop].Radius = 2.f;
 	}
 	FixedLine[0].Pos1.x = 5.f;
 	FixedLine[0].Pos1.y = 20.f;
 	FixedLine[0].Pos2.x = 30.f;
-	FixedLine[0].Pos2.y = 30.f;
+	FixedLine[0].Pos2.y = 40.f;
 	FixedLine[0].Width = 1.f;
 
-	FixedLine[1].Pos1.x = 40.f;
-	FixedLine[1].Pos1.y = 20.f;
-	FixedLine[1].Pos2.x = 15.f;
-	FixedLine[1].Pos2.y = 30.f;
+	FixedLine[1].Pos1.x = 15.f;
+	FixedLine[1].Pos1.y = 40.f;
+	FixedLine[1].Pos2.x = 40.f;
+	FixedLine[1].Pos2.y = 20.f;
 	FixedLine[1].Width = 1.f;
+
+
+	FixedLine[2].Pos1.x = 10.f;
+	FixedLine[2].Pos1.y = 10.f;
+	FixedLine[2].Pos2.x = 10.f;
+	FixedLine[2].Pos2.y = 35.f;
+	FixedLine[2].Width = 1.f;
+
+	FixedLine[3].Pos1.x = 35.f;
+	FixedLine[3].Pos1.y = 35.f;
+	FixedLine[3].Pos2.x = 35.f;
+	FixedLine[3].Pos2.y = 10.f;
+	FixedLine[3].Width = 1.f;
 }
 
 void MainMenu::Update() {
-
-	auto GetID = [&]() {
-		return 0;
-		};
 	//*
-	if (Input::Instance()->GetKeyPress(VK_DOWN)) {
-		RigidBody[GetID()].Vec.y = 1.f;
-	}
-	if (Input::Instance()->GetKeyPress(VK_UP)) {
-		RigidBody[GetID()].Vec.y = -1.f;
-	}
-	if (Input::Instance()->GetKeyPress(VK_LEFT)) {
-		RigidBody[GetID()].Vec.x -= 1.f;
-	}
-	if (Input::Instance()->GetKeyPress(VK_RIGHT)) {
-		RigidBody[GetID()].Vec.x += 1.f;
-	}
-	//*/
-	RigidBody[GetID()].Vec.y += 9.8f;
+	for (auto& r : RigidBody) {
+		if (Input::Instance()->GetKeyPress(VK_DOWN)) {
+			r.Vec.y += 10.f;
+		}
+		if (Input::Instance()->GetKeyPress(VK_UP)) {
+			r.Vec.y -= 10.f;
+		}
+		if (Input::Instance()->GetKeyPress(VK_LEFT)) {
+			r.Vec.x -= 10.f;
+		}
+		if (Input::Instance()->GetKeyPress(VK_RIGHT)) {
+			r.Vec.x += 10.f;
+		}
+		//*/
+		r.Vec.y += 9.8f;
 
-	auto Target = RigidBody[GetID()].Pos + RigidBody[GetID()].Vec * ((1000.f / 60.f) / (60.f * 60.f));
-	{
-		//壁判定//TODO
-		for (auto& f : FixedLine) {
-			if (true) {
+		auto Before = r.Pos;
+		auto After = Before + r.Vec * ((1000.f / 60.f) / (60.f * 60.f));
+		{
+			SEGMENT_SEGMENT_RESULT res;
+			//壁判定
+			for (auto& f : FixedLine) {
+				Segment_Segment_Analyse(f.Pos1, f.Pos2, Before, After, &res);
+				float Radius = (f.Width / 2.f + r.Radius);
+				if (res.SegA_SegB_MinDist_Square < Radius * Radius) {
+					Algorithm::Vector3D CrossPoint;
+					if (Intersection2D(f.Pos1, f.Pos2, Before, After, &CrossPoint)) {
+						auto V1 = (f.Pos2 - f.Pos1).VNorm();
+						auto V2 = (After - Before).VNorm();
+						if (Algorithm::Vector3D::VCross(V2, V1).z > 0.001f) {
+							continue;
+						}
+						auto Cross = Algorithm::Vector3D::VCross(V1, V2).z;
+						Before = CrossPoint - V2 * (Radius / Cross);
+						//After = After - (After-Before).VSize() * Cross;
 
+						auto L = (After - Before) * -1.f;
+						auto normal = calcLineNormal(f.Pos1, f.Pos2);
+						After = After + (normal * (2.0f * Algorithm::Vector3D::VDot(L, normal)));
+
+						float keepsize = r.Vec.VSize();
+						r.Vec = (After - Before) * (1.f / ((1000.f / 60.f) / (60.f * 60.f)));
+						r.Vec = r.Vec.VNorm() * std::min(r.Vec.VSize(), keepsize);
+
+						if ((After - Before).VSize() < 0.001f) { break; }
+					}
+				}
 			}
 		}
+		r.Pos = After;
 	}
-	RigidBody[GetID()].Pos = Target;
 }
 
 void MainMenu::Draw() {
@@ -241,14 +305,16 @@ void MainMenu::Draw() {
 	float scale = 10.f;
 
 	for (auto& r : RigidBody) {
-		Direct2DLib::Instance()->GetDrawSystem()->SetEllipse(r.Pos.x * scale, r.Pos.y * scale, r.Radius * scale, r.Radius * scale,
+		Direct2DLib::Instance()->GetDrawSystem()->SetEllipse(static_cast<float>(r.Pos.x * scale), static_cast<float>(r.Pos.y * scale), static_cast<float>(r.Radius * scale), static_cast<float>(r.Radius * scale + 1.f),
+			D2D1::ColorF(D2D1::ColorF::Black));
+		Direct2DLib::Instance()->GetDrawSystem()->SetEllipse(static_cast<float>(r.Pos.x * scale), static_cast<float>(r.Pos.y * scale), static_cast<float>(r.Radius * scale), static_cast<float>(r.Radius * scale),
 			D2D1::ColorF(D2D1::ColorF::Green));
 	}
 	for (auto& f : FixedLine) {
 		Direct2DLib::Instance()->GetDrawSystem()->SetLine(
-			f.Pos1.x * scale, f.Pos1.y * scale,
-			f.Pos2.x * scale, f.Pos2.y * scale,
-			f.Width * scale,
+			static_cast<float>(f.Pos1.x * scale), static_cast<float>(f.Pos1.y * scale),
+			static_cast<float>(f.Pos2.x * scale), static_cast<float>(f.Pos2.y * scale),
+			static_cast<float>(f.Width * scale),
 			D2D1::ColorF(D2D1::ColorF::Red)
 		);
 	}

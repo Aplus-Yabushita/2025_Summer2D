@@ -211,6 +211,7 @@ void MainMenu::Init() {
 		RigidBody[loop].Vec.y = 0.f;
 		RigidBody[loop].Vec.z = 0.f;
 		RigidBody[loop].Radius = 1.f;
+		RigidBody[loop].CoefficientofRestitution = 1.f;
 	}
 	FixedLine[0].Pos1.x = 5.f;
 	FixedLine[0].Pos1.y = 20.f;
@@ -236,6 +237,24 @@ void MainMenu::Init() {
 	FixedLine[3].Pos2.x = 35.f;
 	FixedLine[3].Pos2.y = 10.f;
 	FixedLine[3].Width = 1.f;
+
+	FixedLine[4].Pos1.x = 1.f;
+	FixedLine[4].Pos1.y = 1.f;
+	FixedLine[4].Pos2.x = 1.f;
+	FixedLine[4].Pos2.y = 45.f;
+	FixedLine[4].Width = 1.f;
+
+	FixedLine[5].Pos1.x = 50.f;
+	FixedLine[5].Pos1.y = 45.f;
+	FixedLine[5].Pos2.x = 50.f;
+	FixedLine[5].Pos2.y = 1.f;
+	FixedLine[5].Width = 1.f;
+
+	FixedLine[6].Pos1.x = 1.f;
+	FixedLine[6].Pos1.y = 45.f;
+	FixedLine[6].Pos2.x = 50.f;
+	FixedLine[6].Pos2.y = 45.f;
+	FixedLine[6].Width = 1.f;
 }
 
 void MainMenu::Update() {
@@ -276,7 +295,7 @@ void MainMenu::Update() {
 
 						auto L = (After - Before) * -1.f;
 						auto normal = calcLineNormal(f.Pos1, f.Pos2);
-						After = After + (normal * (2.0f * Algorithm::Vector3D::VDot(L, normal)));
+						After = After + (normal * ((1.f + r.CoefficientofRestitution) * Algorithm::Vector3D::VDot(L, normal)));
 
 						float keepsize = r.Vec.VSize();
 						r.Vec = (After - Before) * (1.f / ((1000.f / 60.f) / (60.f * 60.f)));
@@ -289,6 +308,7 @@ void MainMenu::Update() {
 			}
 			//‘ŠŒÝ”»’è
 			for (auto& r2 : RigidBody) {
+				//break;
 				if (&r == &r2) { continue; }
 				SEGMENT_POINT_RESULT res;
 				Segment_Point_Analyse(Before, After, r2.Pos, &res);
@@ -301,9 +321,7 @@ void MainMenu::Update() {
 
 					auto L = (After - Before) * -1.f;
 					auto normal = V1;
-					After = After + (normal * (2.0f * Algorithm::Vector3D::VDot(L, normal)));
-
-					//After = Before;//ˆê’UƒxƒNƒgƒ‹‚ð–³Œø‰»
+					After = After + (normal * ((1.f + r.CoefficientofRestitution) * Algorithm::Vector3D::VDot(L, normal)));
 
 					float keepsize = r.Vec.VSize();
 					r.Vec = (After - Before) * (1.f / ((1000.f / 60.f) / (60.f * 60.f)));

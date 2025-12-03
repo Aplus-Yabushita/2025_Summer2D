@@ -297,11 +297,6 @@ void MainMenu::Update() {
 						auto normal = calcLineNormal(f.Pos1, f.Pos2);
 						After = After + (normal * ((1.f + r.CoefficientofRestitution) * Algorithm::Vector3D::VDot(L, normal)));
 
-						float keepsize = r.Vec.VSize();
-						r.Vec = (After - Before) * (1.f / ((1000.f / 60.f) / (60.f * 60.f)));
-						r.Vec = r.Vec.VNorm() * std::min(r.Vec.VSize(), keepsize);
-						After = Before + r.Vec * ((1000.f / 60.f) / (60.f * 60.f));
-
 						if ((After - Before).VSize() < 0.001f) { break; }
 					}
 				}
@@ -323,15 +318,14 @@ void MainMenu::Update() {
 					auto normal = V1;
 					After = After + (normal * ((1.f + r.CoefficientofRestitution) * Algorithm::Vector3D::VDot(L, normal)));
 
-					float keepsize = r.Vec.VSize();
-					r.Vec = (After - Before) * (1.f / ((1000.f / 60.f) / (60.f * 60.f)));
-					r.Vec = r.Vec.VNorm() * std::min(r.Vec.VSize(), keepsize);
-					After = Before + r.Vec * ((1000.f / 60.f) / (60.f * 60.f));
-
 					if ((After - Before).VSize() < 0.001f) { break; }
 				}
 			}
 		}
+		float keepsize = r.Vec.VSize();
+		r.Vec = (After - Before) * (1.f / ((1000.f / 60.f) / (60.f * 60.f)));
+		r.Vec = r.Vec.VNorm() * std::min(r.Vec.VSize(), keepsize);
+		After = Before + r.Vec * ((1000.f / 60.f) / (60.f * 60.f));
 		r.Pos = After;
 	}
 }

@@ -290,15 +290,13 @@ void MainMenu::Update() {
 					if (Intersection2D(f.Pos1, f.Pos2, Before, After, &CrossPoint)) {
 						auto V1 = (f.Pos2 - f.Pos1).VNorm();
 						auto V2 = (After - Before).VNorm();
-						if (Algorithm::Vector3D::VCross(V2, V1).z > 0.001f) {
-							continue;
-						}
-						Before = CrossPoint - V2 * (Radius / Algorithm::Vector3D::VCross(V1, V2).z);
-
-						auto L = (After - Before) * -1.f;
 						auto normal = calcLineNormal(f.Pos1, f.Pos2);
-						After = After + (normal * ((1.f + r.CoefficientofRestitution) * Algorithm::Vector3D::VDot(L, normal)));
+						if (Algorithm::Vector3D::VCross(V2, V1).z > 0.001f) {
+							continue;//反対面なので無視
+						}
 
+						Before = CrossPoint - V2 * (Radius / Algorithm::Vector3D::VCross(V1, V2).z);
+						After = After + (normal * ((1.f + r.CoefficientofRestitution) * Algorithm::Vector3D::VDot((After - Before) * -1.f, normal)));
 						if ((After - Before).VSize() < 0.001f) { break; }
 					}
 				}
@@ -314,12 +312,10 @@ void MainMenu::Update() {
 					Algorithm::Vector3D CrossPoint;
 					auto V1 = (r2.Pos - r.Pos).VNorm();
 					auto V2 = (After - Before).VNorm();
-					Before = res.Seg_MinDist_Pos - V2 * (Radius * Algorithm::Vector3D::VDot(V1, V2))*0.01f;//TODO:本来は相手に接するはずだが変な値が返るので適当な値に
-
-					auto L = (After - Before) * -1.f;
 					auto normal = V1;
-					After = After + (normal * ((1.f + r.CoefficientofRestitution) * Algorithm::Vector3D::VDot(L, normal)));
 
+					Before = res.Seg_MinDist_Pos - V2 * (Radius * Algorithm::Vector3D::VDot(V1, V2))*0.02f;//TODO:本来は相手に接するはずだが変な値が返るので適当な値に
+					After = After + (normal * ((1.f + r.CoefficientofRestitution) * Algorithm::Vector3D::VDot((After - Before) * -1.f, normal)));
 					if ((After - Before).VSize() < 0.001f) { break; }
 				}
 			}

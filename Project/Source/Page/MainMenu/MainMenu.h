@@ -81,7 +81,7 @@ struct FixedLineData {
 };
 
 class MainMenu :public PageParent {
-	std::array<RigidBodyMoveData, 50> RigidBody;
+	std::vector<RigidBodyMoveData> RigidBody;
 	std::array<FixedLineData, 7> FixedLine;
 public:
 	MainMenu(void) noexcept {}

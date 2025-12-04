@@ -203,14 +203,16 @@ static Algorithm::Vector3D calcLineNormal(const Algorithm::Vector3D& a, const Al
 }
 
 void MainMenu::Init() {
+	float width = 8.f;
+	RigidBody.resize(4);
 	for (int loop = 0; loop < RigidBody.size(); ++loop) {
-		RigidBody[loop].Pos.x = 15.f + (loop % 10) * 2.f;
-		RigidBody[loop].Pos.y = 10.f + (loop / 10) * 2.f;
+		RigidBody[loop].Pos.x = 15.f + (loop % static_cast<int>(20 / width)) * width;
+		RigidBody[loop].Pos.y = 10.f + (loop / static_cast<int>(20 / width)) * width;
 		RigidBody[loop].Pos.z = 0.f;
 		RigidBody[loop].Vec.x = 0.f;
 		RigidBody[loop].Vec.y = 0.f;
 		RigidBody[loop].Vec.z = 0.f;
-		RigidBody[loop].Radius = 1.f;
+		RigidBody[loop].Radius = (width - 1.f) / 2.f;
 		RigidBody[loop].CoefficientofRestitution = 1.f;
 	}
 	FixedLine[0].Pos1.x = 5.f;
@@ -312,7 +314,7 @@ void MainMenu::Update() {
 					Algorithm::Vector3D CrossPoint;
 					auto V1 = (r2.Pos - r.Pos).VNorm();
 					auto V2 = (After - Before).VNorm();
-					Before = res.Seg_MinDist_Pos - V2 * (Radius * Algorithm::Vector3D::VDot(V1, V2))*0.05f;//TODO:本来は相手に接するはずだが変な値が返るので適当な値に
+					Before = res.Seg_MinDist_Pos - V2 * (Radius * Algorithm::Vector3D::VDot(V1, V2))*0.01f;//TODO:本来は相手に接するはずだが変な値が返るので適当な値に
 
 					auto L = (After - Before) * -1.f;
 					auto normal = V1;

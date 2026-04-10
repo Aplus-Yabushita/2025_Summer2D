@@ -71,7 +71,7 @@ struct RigidBodyMoveData {
 	Algorithm::Vector3D	Pos{};
 	Algorithm::Vector3D	Vec{};
 	float					Radius{};
-	float					CoefficientofRestitution{};
+	float					CoefficientOfRestitution{};
 };
 
 struct FixedLineData {
@@ -82,7 +82,7 @@ struct FixedLineData {
 
 class MainMenu :public PageParent {
 	std::vector<RigidBodyMoveData> RigidBody;
-	std::array<FixedLineData, 7> FixedLine;
+	std::array<FixedLineData, 11> FixedLine;
 public:
 	MainMenu(void) noexcept {}
 	MainMenu(const MainMenu&) {}

@@ -43,7 +43,13 @@ static void Segment_Point_Analyse(const Algorithm::Vector3D& SegmentPos1, const 
 		Result->Seg_MinDist_Pos1_Pos2_t = DotSeg1_2_Pnt / SizeSquSeg1_2;
 		Result->Seg_MinDist_Pos = Seg1_2 * Result->Seg_MinDist_Pos1_Pos2_t + SegmentPos1;
 	}
+
+
 	Result->Seg_Point_MinDist_Square = (PointPos - Result->Seg_MinDist_Pos).VSquareSize();
+
+	//todo:物理挙動のために線分でなく直線の直交座標を求めている
+	Result->Seg_MinDist_Pos1_Pos2_t = DotSeg1_2_Pnt / SizeSquSeg1_2;
+	Result->Seg_MinDist_Pos = Seg1_2 * Result->Seg_MinDist_Pos1_Pos2_t + SegmentPos1;
 }
 
 static void Segment_Segment_Analyse(const Algorithm::Vector3D& SegmentAPos1, const Algorithm::Vector3D& SegmentAPos2, const Algorithm::Vector3D& SegmentBPos1, const Algorithm::Vector3D& SegmentBPos2, SEGMENT_SEGMENT_RESULT* Result)
@@ -175,6 +181,8 @@ static void Segment_Segment_Analyse(const Algorithm::Vector3D& SegmentAPos1, con
 	return;
 }
 
+
+
 //Z==0を前提とした交点を求める
 static bool Intersection2D(const Algorithm::Vector3D& a, const Algorithm::Vector3D& b, const Algorithm::Vector3D& c, const Algorithm::Vector3D& d, Algorithm::Vector3D* ans) {
 	float deno = Algorithm::Vector3D::VCross(b - a, d - c).z;
@@ -204,7 +212,7 @@ static Algorithm::Vector3D calcLineNormal(const Algorithm::Vector3D& a, const Al
 
 void MainMenu::Init() {
 	float width = 8.f;
-	RigidBody.resize(4);
+	RigidBody.resize(3);
 	for (int loop = 0; loop < RigidBody.size(); ++loop) {
 		RigidBody[loop].Pos.x = 15.f + (loop % static_cast<int>(20 / width)) * width;
 		RigidBody[loop].Pos.y = 10.f + (loop / static_cast<int>(20 / width)) * width;
@@ -213,78 +221,104 @@ void MainMenu::Init() {
 		RigidBody[loop].Vec.y = 0.f;
 		RigidBody[loop].Vec.z = 0.f;
 		RigidBody[loop].Radius = (width - 1.f) / 2.f;
-		RigidBody[loop].CoefficientofRestitution = 1.f;
+		RigidBody[loop].CoefficientOfRestitution = 1.f;
 	}
-	FixedLine[0].Pos1.x = 5.f;
-	FixedLine[0].Pos1.y = 20.f;
-	FixedLine[0].Pos2.x = 30.f;
-	FixedLine[0].Pos2.y = 40.f;
+
+	FixedLine[0].Pos1.x = -1.f;
+	FixedLine[0].Pos1.y = 0.f;
+	FixedLine[0].Pos2.x = -1.f;
+	FixedLine[0].Pos2.y = 48.f;
 	FixedLine[0].Width = 1.f;
 
-	FixedLine[1].Pos1.x = 15.f;
-	FixedLine[1].Pos1.y = 40.f;
-	FixedLine[1].Pos2.x = 40.f;
-	FixedLine[1].Pos2.y = 20.f;
+	FixedLine[1].Pos1.x = 65.f;
+	FixedLine[1].Pos1.y = 48.f;
+	FixedLine[1].Pos2.x = 65.f;
+	FixedLine[1].Pos2.y = 0.f;
 	FixedLine[1].Width = 1.f;
 
-
-	FixedLine[2].Pos1.x = 10.f;
-	FixedLine[2].Pos1.y = 10.f;
-	FixedLine[2].Pos2.x = 10.f;
-	FixedLine[2].Pos2.y = 35.f;
+	FixedLine[2].Pos1.x = 64.f;
+	FixedLine[2].Pos1.y = -1.f;
+	FixedLine[2].Pos2.x = 0.f;
+	FixedLine[2].Pos2.y = -1.f;
 	FixedLine[2].Width = 1.f;
 
-	FixedLine[3].Pos1.x = 35.f;
-	FixedLine[3].Pos1.y = 35.f;
-	FixedLine[3].Pos2.x = 35.f;
-	FixedLine[3].Pos2.y = 10.f;
+	FixedLine[3].Pos1.x = 0.f;
+	FixedLine[3].Pos1.y = 49.f;
+	FixedLine[3].Pos2.x = 64.f;
+	FixedLine[3].Pos2.y = 49.f;
 	FixedLine[3].Width = 1.f;
 
-	FixedLine[4].Pos1.x = 1.f;
-	FixedLine[4].Pos1.y = 1.f;
-	FixedLine[4].Pos2.x = 1.f;
-	FixedLine[4].Pos2.y = 45.f;
+	FixedLine[4].Pos1.x = 5.f;
+	FixedLine[4].Pos1.y = 20.f;
+	FixedLine[4].Pos2.x = 30.f;
+	FixedLine[4].Pos2.y = 40.f;
 	FixedLine[4].Width = 1.f;
 
-	FixedLine[5].Pos1.x = 50.f;
-	FixedLine[5].Pos1.y = 45.f;
-	FixedLine[5].Pos2.x = 50.f;
-	FixedLine[5].Pos2.y = 1.f;
+	FixedLine[5].Pos1.x = 15.f;
+	FixedLine[5].Pos1.y = 40.f;
+	FixedLine[5].Pos2.x = 40.f;
+	FixedLine[5].Pos2.y = 20.f;
 	FixedLine[5].Width = 1.f;
 
-	FixedLine[6].Pos1.x = 1.f;
-	FixedLine[6].Pos1.y = 45.f;
-	FixedLine[6].Pos2.x = 50.f;
-	FixedLine[6].Pos2.y = 45.f;
+
+	FixedLine[6].Pos1.x = 10.f;
+	FixedLine[6].Pos1.y = 10.f;
+	FixedLine[6].Pos2.x = 10.f;
+	FixedLine[6].Pos2.y = 35.f;
 	FixedLine[6].Width = 1.f;
+
+	FixedLine[7].Pos1.x = 35.f;
+	FixedLine[7].Pos1.y = 35.f;
+	FixedLine[7].Pos2.x = 35.f;
+	FixedLine[7].Pos2.y = 10.f;
+	FixedLine[7].Width = 1.f;
+
+	FixedLine[8].Pos1.x = 1.f;
+	FixedLine[8].Pos1.y = 1.f;
+	FixedLine[8].Pos2.x = 1.f;
+	FixedLine[8].Pos2.y = 45.f;
+	FixedLine[8].Width = 1.f;
+
+	FixedLine[9].Pos1.x = 50.f;
+	FixedLine[9].Pos1.y = 45.f;
+	FixedLine[9].Pos2.x = 50.f;
+	FixedLine[9].Pos2.y = 1.f;
+	FixedLine[9].Width = 1.f;
+
+	FixedLine[10].Pos1.x = 1.f;
+	FixedLine[10].Pos1.y = 45.f;
+	FixedLine[10].Pos2.x = 50.f;
+	FixedLine[10].Pos2.y = 45.f;
+	FixedLine[10].Width = 1.f;
 }
 
 void MainMenu::Update() {
-	//*
-	for (auto& r : RigidBody) {
-		if (Input::Instance()->GetKeyPress(VK_DOWN)) {
-			r.Vec.y += 10.f;
+	for (auto& R1 : RigidBody) {
+		size_t index = &R1 - &RigidBody.front();
+		if (index == 0) {
+			if (Input::Instance()->GetKeyPress(VK_DOWN)) {
+				R1.Vec.y += 20.f;
+			}
+			if (Input::Instance()->GetKeyPress(VK_UP)) {
+				R1.Vec.y -= 20.f;
+			}
+			if (Input::Instance()->GetKeyPress(VK_LEFT)) {
+				R1.Vec.x -= 20.f;
+			}
+			if (Input::Instance()->GetKeyPress(VK_RIGHT)) {
+				R1.Vec.x += 20.f;
+			}
 		}
-		if (Input::Instance()->GetKeyPress(VK_UP)) {
-			r.Vec.y -= 10.f;
-		}
-		if (Input::Instance()->GetKeyPress(VK_LEFT)) {
-			r.Vec.x -= 10.f;
-		}
-		if (Input::Instance()->GetKeyPress(VK_RIGHT)) {
-			r.Vec.x += 10.f;
-		}
-		//*/
-		r.Vec.y += 9.8f;
+		R1.Vec.y += 9.8f;
 
-		auto Before = r.Pos;
-		auto After = Before + r.Vec * ((1000.f / 60.f) / (60.f * 60.f));
+		auto Before = R1.Pos;
+		auto After = Before + R1.Vec * ((1000.f / 60.f) / (60.f * 60.f));
 		{
 			//壁判定
 			for (auto& f : FixedLine) {
 				SEGMENT_SEGMENT_RESULT res;
 				Segment_Segment_Analyse(f.Pos1, f.Pos2, Before, After, &res);
-				float Radius = (f.Width / 2.f + r.Radius);
+				float Radius = (f.Width / 2.f + R1.Radius);
 				if (res.SegA_SegB_MinDist_Square < Radius * Radius) {
 					Algorithm::Vector3D CrossPoint;
 					if (Intersection2D(f.Pos1, f.Pos2, Before, After, &CrossPoint)) {
@@ -296,35 +330,38 @@ void MainMenu::Update() {
 						}
 
 						Before = CrossPoint - V2 * (Radius / Algorithm::Vector3D::VCross(V1, V2).z);
-						After = After + (normal * ((1.f + r.CoefficientofRestitution) * Algorithm::Vector3D::VDot((After - Before) * -1.f, normal)));
+						After = After + (normal * ((1.f + R1.CoefficientOfRestitution) * Algorithm::Vector3D::VDot((After - Before) * -1.f, normal)));
 						if ((After - Before).VSize() < 0.001f) { break; }
 					}
 				}
 			}
 			//相互判定
-			for (auto& r2 : RigidBody) {
-				//break;
-				if (&r == &r2) { continue; }
+			for (auto& R2 : RigidBody) {
+				if (&R1 == &R2) { continue; }
 				SEGMENT_POINT_RESULT res;
-				Segment_Point_Analyse(Before, After, r2.Pos, &res);
-				float Radius = (r.Radius + r2.Radius);
-				if (res.Seg_Point_MinDist_Square < Radius * Radius) {
-					Algorithm::Vector3D CrossPoint;
-					auto V1 = (r2.Pos - r.Pos).VNorm();
-					auto V2 = (After - Before).VNorm();
-					auto normal = V1;
+				Segment_Point_Analyse(Before, After, R2.Pos, &res);
+				float Radius = (R1.Radius + R2.Radius);
+				if (res.Seg_Point_MinDist_Square <= Radius * Radius) {
+					auto VectorR = (After - Before).VNorm();
+					auto VectorRSize = (After - Before).VSize();
+					auto MinPosToR2PosLength = (res.Seg_MinDist_Pos - R2.Pos).VSize();
 
-					Before = res.Seg_MinDist_Pos - V2 * (Radius * Algorithm::Vector3D::VDot(V1, V2))*0.02f;//TODO:本来は相手に接するはずだが変な値が返るので適当な値に
-					After = After + (normal * ((1.f + r.CoefficientofRestitution) * Algorithm::Vector3D::VDot((After - Before) * -1.f, normal)));
+					Before = res.Seg_MinDist_Pos - VectorR * (Radius * sqrtf(1.f - powf(MinPosToR2PosLength / Radius, 2.f)));//接触座標
+
+					auto normal = (Before - R2.Pos).VNorm();
+
+					After = After + (normal * (Algorithm::Vector3D::VDot((After - Before) * -1.f, normal)));//ずりベクトルでの移動後の座標
+
+					//After = Before;
 					if ((After - Before).VSize() < 0.001f) { break; }
 				}
 			}
 		}
-		float keepsize = r.Vec.VSize();
-		r.Vec = (After - Before) * (1.f / ((1000.f / 60.f) / (60.f * 60.f)));
-		r.Vec = r.Vec.VNorm() * std::min(r.Vec.VSize(), keepsize);
-		After = Before + r.Vec * ((1000.f / 60.f) / (60.f * 60.f));
-		r.Pos = After;
+		float keepsize = R1.Vec.VSize();
+		R1.Vec = (After - Before) * (1.f / ((1000.f / 60.f) / (60.f * 60.f)));
+		//R1.Vec = R1.Vec.VNorm() * std::min(R1.Vec.VSize(), keepsize);
+		After = Before + R1.Vec * ((1000.f / 60.f) / (60.f * 60.f));
+		R1.Pos = After;
 	}
 }
 

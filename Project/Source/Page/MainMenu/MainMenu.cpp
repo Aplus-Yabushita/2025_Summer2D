@@ -212,7 +212,7 @@ static Algorithm::Vector3D calcLineNormal(const Algorithm::Vector3D& a, const Al
 
 void MainMenu::Init() {
 	float width = 8.f;
-	RigidBody.resize(3);
+	RigidBody.resize(2);
 	for (int loop = 0; loop < RigidBody.size(); ++loop) {
 		RigidBody[loop].Pos.x = 15.f + (loop % static_cast<int>(20 / width)) * width;
 		RigidBody[loop].Pos.y = 10.f + (loop / static_cast<int>(20 / width)) * width;
@@ -323,13 +323,13 @@ void MainMenu::Update() {
 					Algorithm::Vector3D CrossPoint;
 					if (Intersection2D(f.Pos1, f.Pos2, Before, After, &CrossPoint)) {
 						auto V1 = (f.Pos2 - f.Pos1).VNorm();
-						auto V2 = (After - Before).VNorm();
+						auto VectorR = (After - Before).VNorm();
 						auto normal = calcLineNormal(f.Pos1, f.Pos2);
-						if (Algorithm::Vector3D::VCross(V2, V1).z > 0.001f) {
+						if (Algorithm::Vector3D::VCross(VectorR, V1).z > 0.001f) {
 							continue;//”½‘Î–Ê‚È‚Ì‚Å–³Ž‹
 						}
 
-						Before = CrossPoint - V2 * (Radius / Algorithm::Vector3D::VCross(V1, V2).z);
+						Before = CrossPoint - VectorR * (Radius / Algorithm::Vector3D::VCross(V1, VectorR).z);
 						After = After + (normal * ((1.f + R1.CoefficientOfRestitution) * Algorithm::Vector3D::VDot((After - Before) * -1.f, normal)));
 						if ((After - Before).VSize() < 0.001f) { break; }
 					}
@@ -344,7 +344,8 @@ void MainMenu::Update() {
 				if (res.Seg_Point_MinDist_Square <= Radius * Radius) {
 					auto VectorR = (After - Before).VNorm();
 					auto VectorRSize = (After - Before).VSize();
-					auto MinPosToR2PosLength = (res.Seg_MinDist_Pos - R2.Pos).VSize();
+					if (VectorRSize < 0.0000001f) { continue; }
+					auto MinPosToR2PosLength = std::min((res.Seg_MinDist_Pos - R2.Pos).VSize(), Radius);
 
 					Before = res.Seg_MinDist_Pos - VectorR * (Radius * sqrtf(1.f - powf(MinPosToR2PosLength / Radius, 2.f)));//ÚGÀ•W
 
